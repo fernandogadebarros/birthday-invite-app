@@ -38,10 +38,15 @@ export function formatRelative(iso: string, now: Date = new Date()): string {
   return `há ${days}d`;
 }
 
-/** Splits the companions textarea (one name per line, or separated by comma/semicolon) into clean names. */
+// Anything people use to separate names: line breaks, punctuation, symbols, a spaced
+// dash ("Ana - Bia") or the words "e"/"ou". A dash inside a name ("Ana-Clara") is kept.
+const NAME_SEPARATORS = /[\n\r,;:|/\\&+*#•·]+|\s[-–—]+\s|\s+(?:e|ou)\s+/i;
+const EDGE_NON_LETTERS = /^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu;
+
+/** Splits the companions textarea into clean names, whatever the separator. */
 export function parseNames(text: string): string[] {
   return text
-    .split(/[\n,;]+/)
-    .map((n) => n.trim())
+    .split(NAME_SEPARATORS)
+    .map((n) => n.replace(EDGE_NON_LETTERS, "").trim())
     .filter(Boolean);
 }

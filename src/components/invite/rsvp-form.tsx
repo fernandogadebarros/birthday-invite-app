@@ -100,7 +100,7 @@ export function RsvpForm({ code, name, initial, onSaved }: RsvpFormProps) {
               <Textarea
                 label="Nomes dos acompanhantes"
                 rows={3}
-                placeholder="Um nome por linha ou separados por vírgula"
+                placeholder="Separe os nomes por linha, vírgula, hífen ou /"
                 value={namesText}
                 onChange={(e) => setNamesText(e.target.value)}
                 className="min-h-[88px] bg-panel text-body leading-[1.6]"
