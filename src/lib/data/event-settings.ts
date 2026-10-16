@@ -6,10 +6,10 @@ import { createServiceClient } from "@/lib/supabase/service-client";
 export async function getEventSettings(): Promise<EventSettings> {
   const { data, error } = await createServiceClient()
     .from("event_settings")
-    .select("starts_at, rsvp_deadline, venue")
+    .select("starts_at, rsvp_deadline, venue, spot")
     .eq("id", 1)
     .maybeSingle();
   if (error) throw error;
   if (!data) return defaultEventSettings;
-  return { startsAt: data.starts_at, rsvpDeadline: data.rsvp_deadline, venue: data.venue };
+  return { startsAt: data.starts_at, rsvpDeadline: data.rsvp_deadline, venue: data.venue, spot: data.spot };
 }

@@ -27,7 +27,9 @@ export const metadata: Metadata = {
     description: `Confirme sua presença na festa da ${event.celebrant.nickname}`,
     type: "website",
     locale: "pt_BR",
+    images: [{ url: "/images/og-card.jpg", width: 1200, height: 630, type: "image/jpeg" }],
   },
+  twitter: { card: "summary_large_image", images: ["/images/og-card.jpg"] },
   robots: { index: false, follow: false },
 };
 

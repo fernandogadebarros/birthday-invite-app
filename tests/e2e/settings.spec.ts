@@ -26,6 +26,8 @@ test("admin edits the event and the invite follows, with an automatic map link",
   await dialog.getByLabel("Data").fill("2026-12-05");
   await dialog.getByLabel("Hora").fill("15:30");
   await dialog.getByLabel("Local").fill("Salão Azul, Rua das Flores 10");
+  await expect(dialog.getByLabel("Onde")).toHaveValue("Quiosque da amizade");
+  await dialog.getByLabel("Onde").fill("Mesa 3");
   await dialog.getByRole("button", { name: "Salvar" }).click();
   await expect(dialog.getByText("O prazo para confirmar deve ser até o dia da festa.")).toBeVisible();
 
@@ -38,10 +40,10 @@ test("admin edits the event and the invite follows, with an automatic map link",
   // The guest page shows the new details and the map link comes from the venue text.
   const guest = await (await browser.newContext()).newPage();
   await guest.goto("/invite/bruno-t2hn");
-  await expect(guest.getByText("Sáb, 05 dez")).toBeVisible();
-  await expect(guest.getByText("15h30")).toBeVisible();
-  await expect(guest.getByText("30 nov")).toBeVisible();
-  await expect(guest.getByText("Salão Azul, Rua das Flores 10")).toBeVisible();
+  await expect(guest.getByText("Sábado, 05 dez")).toBeVisible();
+  await expect(guest.getByText("15h30", { exact: true })).toBeVisible();
+  await expect(guest.getByText("Mesa 3", { exact: true })).toBeVisible();
+  await expect(guest.getByText("Salão Azul, Rua das Flores 10", { exact: true })).toBeVisible();
   const href = await guest.getByRole("link", { name: "ver mapa ↗" }).getAttribute("href");
   expect(href).toBe("https://www.google.com/maps/search/?api=1&query=Salão%20Azul%2C%20Rua%20das%20Flores%2010".replace("ã", "%C3%A3"));
 

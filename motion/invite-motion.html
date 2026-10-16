@@ -17,7 +17,7 @@
 <script>
 // Port of design/invite-motion-elegante.jsx to plain DOM so frames can be rendered
 // deterministically (window.renderFrame(t)). Dates, venue and the confirmation link
-// are intentionally not part of the video: only the title and "Espero você!".
+// are intentionally not part of the video: only the name and "Espero você!".
 const W = 1080, H = 1400;
 const TOTAL = 18;
 const CUES = { Abertura: 0, Minnie: 2.5, Nome: 5.5, Festa: 9, Convite: 14 }; // from the scene durations 2.5 / 3 / 3.5 / 5 / 4
@@ -55,15 +55,15 @@ const balloons = BALLOONS.map((b) => add(el(`<div style="left:${b.x}px;width:${b
   <div style="width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:11px solid ${b.g[1]};margin-top:-2px"></div>
   <div style="width:2px;height:${b.s * 1.6}px;background:linear-gradient(${GOLD_L}, rgba(184,137,58,0))"></div></div>`)));
 
-// Minnie (body + arm slices, arm pivots at the shoulder)
-const mh = 620, mw = mh * 820 / 1302;
-const minnie = add(el(`<div style="left:50%;top:500px;height:${mh}px;width:${mw}px">
-  <div class="abs" style="left:-30%;right:-30%;bottom:-4%;height:26%;border-radius:50%;background:radial-gradient(ellipse, rgba(255,255,255,.95), rgba(255,255,255,0) 70%)"></div>
-  <div class="mrig abs" style="inset:0;transform-origin:45% 100%;filter:drop-shadow(0 24px 30px rgba(140,50,90,.22))">
-    <img src="../public/images/minnie2-body.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill">
-    <img class="marm" src="../public/images/minnie2-arm.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;transform-origin:57.3% 49.9%">
+// Portrait in a gold arch (photo is cropped by the arch, no cut-out needed)
+const AW = 560, AH = 640;
+const portrait = add(el(`<div style="left:${(W - AW) / 2}px;top:490px;width:${AW}px;height:${AH}px;transform-origin:50% 100%">
+  <div class="abs" style="inset:-26px;border:2px solid ${GOLD};border-radius:${AW / 2 + 26}px ${AW / 2 + 26}px 28px 28px"></div>
+  <div class="abs" style="inset:-12px;border:1px solid rgba(184,137,58,.5);border-radius:${AW / 2 + 12}px ${AW / 2 + 12}px 20px 20px"></div>
+  <div class="abs" style="inset:0;overflow:hidden;border-radius:${AW / 2}px ${AW / 2}px 14px 14px;box-shadow:0 30px 60px rgba(140,50,90,.28);background:#f4c6d4">
+    <img class="photo" src="./manu.jpg" style="position:absolute;left:-13px;top:-230px;width:640px;height:1138px;object-fit:cover;transform-origin:50% 25%">
   </div></div>`));
-const mrig = minnie.querySelector('.mrig'), marm = minnie.querySelector('.marm');
+const photo = portrait.querySelector('.photo');
 
 // Glitter
 const glitter = GLITTER.map((g, i) => add(g.star
@@ -71,8 +71,7 @@ const glitter = GLITTER.map((g, i) => add(g.star
   : el(`<div style="left:${g.x}px;width:${g.s}px;height:${g.s}px;border-radius:50%;background:${i % 2 ? GOLD_L : '#fff'};box-shadow:0 0 ${g.s * 2}px ${i % 2 ? 'rgba(226,194,122,.9)' : 'rgba(255,255,255,.9)'}"></div>`)));
 
 // Title (kept from the design)
-add(el(`<div style="left:0;right:0;top:110px;display:flex;flex-direction:column;align-items:center">
-  <span style="font:500 30px 'Cormorant Garamond', serif;letter-spacing:.42em;text-transform:uppercase;color:${INK}">o primeiro aninho de</span>
+add(el(`<div style="left:0;right:0;top:100px;display:flex;flex-direction:column;align-items:center">
   <div style="font:400 240px/1.15 'Great Vibes', cursive;color:${GOLD};text-shadow:0 2px 0 #fff, 0 10px 30px rgba(184,137,58,.35);padding:0 50px;margin-top:-6px">Manuela</div>
   <div style="display:flex;align-items:center;gap:26px;margin-top:-18px">
     <span style="width:120px;height:1.5px;background:${GOLD}"></span>
@@ -80,23 +79,13 @@ add(el(`<div style="left:0;right:0;top:110px;display:flex;flex-direction:column;
     <span style="width:120px;height:1.5px;background:${GOLD}"></span></div></div>`));
 
 // Closing line (the date, time, venue and confirmation link are not in the video)
-add(el(`<div style="left:0;right:0;top:1160px;display:flex;justify-content:center">
-  <span style="font:400 130px/1 'Great Vibes', cursive;color:${ROSE}">Espero você!</span></div>`));
+add(el(`<div style="left:0;right:0;top:1195px;display:flex;justify-content:center">
+  <span style="font:400 130px/1 'Great Vibes', cursive;color:${GOLD}">Espero você!</span></div>`));
 
 // Double gold frame
 add(el(`<div style="inset:44px;pointer-events:none">
   <div class="abs" style="inset:0;border:2px solid ${GOLD};border-radius:40px"></div>
   <div class="abs" style="inset:14px;border:1px solid rgba(184,137,58,.45);border-radius:30px"></div></div>`));
-
-function minniePose(T) {
-  const w = Math.PI * 2 / TOTAL;
-  const env = (a, b, c, d) => glide(T, a, b) * (1 - glide(T, c, d));
-  const hi = env(CUES.Nome + 0.4, CUES.Nome + 1.2, CUES.Nome + 2.6, CUES.Nome + 3.4);
-  const bye = env(CUES.Convite + 0.8, CUES.Convite + 1.6, CUES.Convite + 2.8, CUES.Convite + 3.6);
-  const wave = (hi + bye) * Math.sin((T - CUES.Nome) * 3.2) * 7;
-  const idleArm = Math.sin(T * w * 6) * 1.5;
-  return { lean: Math.sin(T * w * 4) * 1.4, breathe: Math.sin(T * w * 9) * 0.008, arm: idleArm + wave - (hi + bye) * 3 };
-}
 
 // Everything is a pure function of T (seconds, 0 <= T < TOTAL), so the video loops seamlessly.
 window.renderFrame = function (T) {
@@ -120,13 +109,11 @@ window.renderFrame = function (T) {
   });
 
   const k = rise(T, CUES.Minnie - 1.2, CUES.Minnie + 1.2);
-  const float = Math.sin(phase * 5) * 10;
-  const pose = minniePose(T);
-  minnie.style.opacity = k * (1 - out);
-  minnie.style.filter = `blur(${(1 - k) * 12}px)`;
-  minnie.style.transform = `translate(-50%, ${(1 - k) * 50 + float}px) scale(${0.92 + k * 0.08})`;
-  mrig.style.transform = `rotate(${pose.lean}deg) scale(${1 - pose.breathe * 0.5}, ${1 + pose.breathe})`;
-  marm.style.transform = `rotate(${pose.arm}deg)`;
+  const float = Math.sin(phase * 5) * 8;
+  portrait.style.opacity = k * (1 - out);
+  portrait.style.filter = `blur(${(1 - k) * 12}px)`;
+  portrait.style.transform = `translateY(${(1 - k) * 50 + float}px) scale(${0.94 + k * 0.06})`;
+  photo.style.transform = `scale(${1.03 + 0.03 * Math.sin(phase)})`;
 
   glitter.forEach((node, i) => {
     const g = GLITTER[i];
@@ -140,7 +127,7 @@ window.renderFrame = function (T) {
 
 window.TOTAL = TOTAL;
 window.fitTo = (width) => { stage.style.transform = `scale(${width / W})`; };
-window.ready = Promise.all([document.fonts.ready, ...[...document.images].map((i) => i.decode().catch(() => {}))]).then(() => document.fonts.load("240px 'Great Vibes'")).then(() => document.fonts.load("500 30px 'Cormorant Garamond'"));
+window.ready = Promise.all([document.fonts.ready, ...[...document.images].map((i) => i.decode().catch(() => {}))]).then(() => document.fonts.load("240px 'Great Vibes'")).then(() => document.fonts.load("500 64px 'Cormorant Garamond'"));
 window.renderFrame(0);
 </script>
 </body>

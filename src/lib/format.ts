@@ -39,8 +39,9 @@ export function formatRelative(iso: string, now: Date = new Date()): string {
 }
 
 // Anything people use to separate names: line breaks, punctuation, symbols, a spaced
-// dash ("Ana - Bia") or the words "e"/"ou". A dash inside a name ("Ana-Clara") is kept.
-const NAME_SEPARATORS = /[\n\r,;:|/\\&+*#•·]+|\s[-–—]+\s|\s+(?:e|ou)\s+/i;
+// dash ("Ana - Bia"), two or more spaces in a row or the words "e"/"ou". A single space
+// ("Ana Clara") and a dash inside a name ("Ana-Clara") are kept.
+const NAME_SEPARATORS = /[\n\r,;:|/\\&+*#•·]+|[ \t]{2,}|\s[-–—]+\s|\s+(?:e|ou)\s+/i;
 const EDGE_NON_LETTERS = /^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu;
 
 /** Splits the companions textarea into clean names, whatever the separator. */

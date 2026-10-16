@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("guest confirms with companions and can change the answer", async ({ page }) => {
   await page.goto("/invite/diego-r9fc");
-  await expect(page.getByText("Oi, Diego — você está convidado(a)")).toBeVisible();
+  await expect(page.getByText("Oi, Diego - você está convidado(a)")).toBeVisible();
   await expect(page.getByLabel("Seu nome")).toHaveValue("Diego Santana");
 
   const submit = page.getByRole("button", { name: "Confirmar presença →" });
@@ -72,10 +72,10 @@ test("mobile: both cards have the same width and the info grid has no empty cell
   const [top, bottom] = await Promise.all([cards.nth(0).boundingBox(), cards.nth(1).boundingBox()]);
   expect(Math.round(bottom!.width)).toBe(Math.round(top!.width));
 
-  const cell = page.getByText("Confirme até", { exact: true }).locator("..");
+  const cell = page.getByText("Onde", { exact: true }).locator("..");
   const grid = cell.locator("..");
   const [cellBox, gridBox] = await Promise.all([cell.boundingBox(), grid.boundingBox()]);
-  // On a 390px screen the deadline fills its own row instead of leaving a pink gap.
+  // On a 390px screen the "Onde" cell fills its own row instead of leaving a pink gap.
   expect(cellBox!.width).toBeGreaterThan(gridBox!.width - 4);
   await expect(page.getByText(/dúvidas\? chame a/)).toHaveCount(0);
 });

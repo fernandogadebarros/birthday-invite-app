@@ -8,9 +8,11 @@ type SegmentedProps<T extends string> = {
   value: T;
   onChange: (value: T) => void;
   label: string;
+  /** Stretch to the container width, splitting it evenly between the options. */
+  fullWidth?: boolean;
 };
 
-export function Segmented<T extends string>({ options, value, onChange, label }: SegmentedProps<T>) {
+export function Segmented<T extends string>({ options, value, onChange, label, fullWidth }: SegmentedProps<T>) {
   const refs = useRef<Array<HTMLButtonElement | null>>([]);
 
   function onKeyDown(e: KeyboardEvent, index: number) {
@@ -26,7 +28,10 @@ export function Segmented<T extends string>({ options, value, onChange, label }:
     <div
       role="radiogroup"
       aria-label={label}
-      className="inline-flex rounded-sm border border-line-subtle bg-hover p-0.5 font-sans text-caption font-medium"
+      className={cn(
+        "rounded-sm border border-line-subtle bg-hover p-0.5 font-sans text-caption font-medium",
+        fullWidth ? "flex w-full" : "inline-flex",
+      )}
     >
       {options.map((option, index) => {
         const active = option.value === value;
@@ -44,6 +49,7 @@ export function Segmented<T extends string>({ options, value, onChange, label }:
             onKeyDown={(e) => onKeyDown(e, index)}
             className={cn(
               "cursor-pointer rounded-xs px-2.5 py-[5px]",
+              fullWidth && "flex-1",
               active ? "bg-raised text-ink" : "text-muted hover:text-secondary",
             )}
           >

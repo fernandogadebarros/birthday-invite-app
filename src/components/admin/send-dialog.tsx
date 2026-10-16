@@ -126,7 +126,7 @@ export function SendDialog({ target, message, onMessageChange, onClose, baseUrl,
           <div className="flex max-w-[300px] flex-col gap-2 rounded-[12px_12px_4px_12px] bg-bubble px-1 pt-1 pb-2">
             <div className="overflow-hidden rounded-[8px] bg-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/opengraph-image" alt="" className="block aspect-[1200/630] w-full object-cover" />
+              <img src="/images/og-card.jpg" alt="" className="block aspect-[1200/630] w-full object-cover" />
               <div className="flex flex-col gap-0.5 px-2.5 py-2">
                 <span className="font-sans text-caption font-semibold text-ink">{ogTitle()}</span>
                 <span className="font-sans text-micro text-secondary">{ogDescription(settings)}</span>

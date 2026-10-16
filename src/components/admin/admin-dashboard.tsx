@@ -90,9 +90,9 @@ export function AdminDashboard({ guests, nowIso, baseUrl, settings }: AdminDashb
         <StatsCards stats={stats} />
 
         <div className="overflow-hidden rounded-panel border border-line bg-panel">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line-subtle px-3.5 py-3">
-            <Segmented label="Filtrar convidados" options={FILTERS} value={filter} onChange={setFilter} />
-            <div className="max-w-[260px] min-w-[180px] flex-1">
+          <div className="flex flex-col gap-3 border-b border-line-subtle px-3.5 py-3">
+            <Segmented fullWidth label="Filtrar convidados" options={FILTERS} value={filter} onChange={setFilter} />
+            <div className="w-full">
               <Input icon="⌕" aria-label="Buscar convidado" placeholder="buscar convidado" value={query} onChange={(e) => setQuery(e.target.value)} />
             </div>
           </div>
