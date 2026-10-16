@@ -5,11 +5,10 @@ A web app to manage birthday party invitations and RSVPs. Guests get a personal 
 ## Features
 
 - **Personal invite links** (`/invite/<code>`): the guest sees their name, confirms or declines, adds companions, and can change the answer until the deadline.
-- **Generic link** (`/`): anyone can confirm; each answer becomes a new guest with its own personal link.
 - **Admin dashboard** (`/admin`): totals, filters, search, guest registration and WhatsApp invites or reminders (`wa.me` links, one chat per click for bulk reminders).
 - **Realtime updates**: the admin list refreshes by itself when a guest answers.
+- **Editable event**: date, time, deadline and venue are changed in the admin area, no deploy needed.
 - **Link preview**: generated Open Graph image and metadata for WhatsApp cards.
-- **Calendar export**: `.ics` file for the event.
 - **Email and password login** for the admin area, restricted to an allowlist of emails.
 
 ## Stack
@@ -25,15 +24,16 @@ A web app to manage birthday party invitations and RSVPs. Guests get a personal 
 | Route | Description |
 |---|---|
 | `/invite/[code]` | Personal invite with the RSVP form |
-| `/` | Generic invite; confirming creates a new guest |
+| `/` | Explains that each guest needs their personal link |
 | `/admin` | Guest list and invitations (requires login) |
 | `/admin/login` | Admin login |
-| `/calendar.ics` | Event calendar file |
 | `/api/keep-alive` | Cron endpoint; requires `Authorization: Bearer $CRON_SECRET` |
 
 ## Configuring the event
 
-Everything about the party (date, time, venue, RSVP deadline, contact, copy and the default WhatsApp message) lives in [`src/lib/event.ts`](src/lib/event.ts).
+The date, time, RSVP deadline and venue are editable in the admin area (**Editar evento**) and stored in the `event_settings` table. The invite page, the WhatsApp message and the "ver mapa" link (built from the venue text) follow automatically. Defaults, the contact, the copy and the other static details live in [`src/lib/event.ts`](src/lib/event.ts).
+
+The animated header of the invite is a looping video (`public/video/invite.mp4`) rendered from `motion/invite-motion.html`. To regenerate it, run `pnpm motion:render` (requires `ffmpeg`).
 
 ## Getting started
 

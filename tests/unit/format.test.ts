@@ -19,6 +19,9 @@ describe("format", () => {
 
   it("parses names and words", () => {
     expect(parseNames(" Luiza \n\nTheo Moreira\n ")).toEqual(["Luiza", "Theo Moreira"]);
+    expect(parseNames("Michael, Pedro pereira")).toEqual(["Michael", "Pedro pereira"]);
+    expect(parseNames("Ana; Bia,\nCarla,, ")).toEqual(["Ana", "Bia", "Carla"]);
+    expect(parseNames("   ,  ")).toEqual([]);
     expect(firstName("  Marina Costa ")).toBe("Marina");
     expect(pluralizePeople(1)).toBe("1 pessoa");
     expect(pluralizePeople(3)).toBe("3 pessoas");

@@ -38,10 +38,10 @@ export function formatRelative(iso: string, now: Date = new Date()): string {
   return `há ${days}d`;
 }
 
-/** Splits the companions textarea (one name per line) into clean names. */
+/** Splits the companions textarea (one name per line, or separated by comma/semicolon) into clean names. */
 export function parseNames(text: string): string[] {
   return text
-    .split("\n")
+    .split(/[\n,;]+/)
     .map((n) => n.trim())
     .filter(Boolean);
 }

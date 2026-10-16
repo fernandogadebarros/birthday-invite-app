@@ -5,8 +5,8 @@ function StatCard({ label, value, sub, valueClass }: { label: string; value: num
   return (
     <div className="flex flex-col gap-2 rounded-card border border-line-subtle bg-card px-[18px] py-4">
       <span className="label-caps">{label}</span>
-      <span className={cn("font-sans text-34 leading-none font-semibold tracking-tight", valueClass)}>{value}</span>
-      <span className="font-sans text-12 text-muted">{sub}</span>
+      <span className={cn("font-sans text-display leading-none font-semibold tracking-tight", valueClass)}>{value}</span>
+      <span className="font-sans text-caption text-muted">{sub}</span>
     </div>
   );
 }

@@ -13,7 +13,8 @@
     "db:start": "supabase start -x vector,logflare,edge-runtime,storage-api,imgproxy,studio,postgres-meta,supavisor",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
-    "db:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts && prettier --write src/lib/supabase/database.types.ts"
+    "db:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts && prettier --write src/lib/supabase/database.types.ts",
+    "motion:render": "node scripts/render-motion.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

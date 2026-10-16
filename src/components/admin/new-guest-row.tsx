@@ -46,7 +46,7 @@ export function NewGuestRow({ onAdded }: { onAdded: (guest: Guest) => void }) {
         {pending ? "Adicionando…" : "Adicionar e enviar →"}
       </Button>
       {error && (
-        <p role="alert" className="m-0 w-full font-sans text-12 text-accent">
+        <p role="alert" className="m-0 w-full font-sans text-caption text-accent">
           {error}
         </p>
       )}

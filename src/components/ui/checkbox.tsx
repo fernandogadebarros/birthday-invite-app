@@ -6,7 +6,7 @@ export function CheckboxMark({ checked }: { checked: boolean }) {
     <span
       aria-hidden
       className={cn(
-        "mt-px flex size-5 flex-none items-center justify-center rounded-xs border font-sans text-12 font-bold text-white transition-all duration-150",
+        "mt-px flex size-5 flex-none items-center justify-center rounded-xs border font-sans text-caption font-bold text-white transition-all duration-150",
         checked ? "border-accent bg-accent" : "border-line-strong bg-transparent",
       )}
     >

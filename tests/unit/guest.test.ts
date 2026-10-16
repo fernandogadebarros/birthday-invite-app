@@ -37,22 +37,25 @@ describe("stats", () => {
 
   it("labels guest activity", () => {
     const now = new Date("2026-10-15T12:00:00Z");
-    expect(guestActivityLabel({ status: "pending", sent_at: null, responded_at: null, source: "invite" }, now)).toBe("não enviado");
-    expect(guestActivityLabel({ status: "pending", sent_at: "2026-10-13T10:00:00Z", responded_at: null, source: "invite" }, now)).toBe("enviado há 2d");
-    expect(guestActivityLabel({ status: "yes", sent_at: null, responded_at: "2026-10-15T09:00:00Z", source: "invite" }, now)).toBe("há 3h");
+    expect(guestActivityLabel({ status: "pending", sent_at: null, responded_at: null }, now)).toBe("não enviado");
+    expect(guestActivityLabel({ status: "pending", sent_at: "2026-10-13T10:00:00Z", responded_at: null }, now)).toBe("enviado há 2d");
+    expect(guestActivityLabel({ status: "yes", sent_at: null, responded_at: "2026-10-15T09:00:00Z" }, now)).toBe("há 3h");
   });
 });
 
 describe("rsvp schema", () => {
-  const base = { name: "Marina", status: "yes" as const, companionsCount: 2, companionsNames: ["Ana"] };
+  const base = { code: "marina-k7q2", status: "yes" as const, companionsCount: 2, companionsNames: ["Ana"] };
 
-  it("accepts up to the declared number of names", () => {
-    expect(rsvpSchema.safeParse(base).success).toBe(true);
+  it("requires exactly one name per companion", () => {
+    expect(rsvpSchema.safeParse({ ...base, companionsNames: ["Ana", "Bia"] }).success).toBe(true);
+    expect(rsvpSchema.safeParse(base).success).toBe(false); // 2 companions, 1 name
     expect(rsvpSchema.safeParse({ ...base, companionsNames: ["A", "B", "C"] }).success).toBe(false);
+    expect(rsvpSchema.safeParse({ ...base, companionsCount: 0, companionsNames: [] }).success).toBe(true);
   });
 
-  it("rejects empty names and more than 5 companions", () => {
-    expect(rsvpSchema.safeParse({ ...base, name: "  " }).success).toBe(false);
+  it("rejects a missing invite code and more than 5 companions", () => {
+    expect(rsvpSchema.safeParse({ ...base, code: "  " }).success).toBe(false);
+    expect(rsvpSchema.safeParse({ ...base, code: undefined }).success).toBe(false);
     expect(rsvpSchema.safeParse({ ...base, companionsCount: 6 }).success).toBe(false);
   });
 

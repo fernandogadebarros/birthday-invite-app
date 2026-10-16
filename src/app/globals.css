@@ -14,7 +14,7 @@
   /* surfaces */
   --color-page: #fde4ee;
   --color-app: #fff7fa;
-  --color-top-bar: #1d1418;
+  --color-top-bar: #3d2a32;
   --color-panel: #ffffff;
   --color-card: #fff3f8;
   --color-hover: #ffe4ef;
@@ -22,7 +22,6 @@
   --color-raised: #ffd0e3;
   --color-bubble: #ffd6e6;
   --color-pink-soft: #f7a2c6;
-  --color-pink-pale: #fbc3da;
   --color-scrim: rgb(5 6 7 / 0.72);
 
   /* borders */
@@ -43,7 +42,6 @@
   --color-accent-pressed: #c21f64;
   --color-hero: #f45d9e;
   --color-gold: #a8771c;
-  --color-gold-decor: #f5c84c;
   --color-success: #2e8a66;
   --color-deadline-bg: #fff4dc;
   --color-deadline-border: #ecd28f;
@@ -52,18 +50,19 @@
   --font-sans: var(--font-fredoka), system-ui, sans-serif;
   --font-script: var(--font-great-vibes), cursive;
 
-  --text-11: 11px;
-  --text-12: 12px;
-  --text-13: 13px;
-  --text-14: 14px;
-  --text-15: 15px;
-  --text-16: 16px;
-  --text-18: 18px;
-  --text-20: 20px;
-  --text-22: 22px;
-  --text-26: 26px;
-  --text-34: 34px;
-  --text-84: 84px;
+  /* Font sizes in rem so they follow the browser's text-size setting. */
+  --text-tiny: 0.75rem;
+  --text-micro: 0.8125rem;
+  --text-caption: 0.875rem;
+  --text-small: 0.9375rem;
+  --text-body: 1rem;
+  --text-body-lg: 1.0625rem;
+  --text-lead: 1.125rem;
+  --text-subtitle: 1.25rem;
+  --text-title-sm: 1.375rem;
+  --text-title: 1.5rem;
+  --text-heading: 1.75rem;
+  --text-display: 2.25rem;
 
   --tracking-label: 0.08em;
   --tracking-greeting: 0.06em;
@@ -76,46 +75,16 @@
   --radius-modal: 14px;
   --radius-card: 16px;
 
-  /* shadows: only floating layers + "sticker" shadows in the hero */
+  /* shadows: only floating layers */
   --shadow-modal: 0 24px 64px rgb(0 0 0 / 0.5);
-  --shadow-phone: 0 24px 64px rgb(0 0 0 / 0.45);
-  --shadow-sticker: 3px 3px 0 #1d1418;
   --shadow-ring-accent: inset 0 0 0 1px #e0307a;
-  --shadow-ring-top-bar: 0 0 0 2px #ffffff;
-
-  /* hero motion */
-  --animate-sway: sway 4.5s ease-in-out infinite;
-  --animate-drift: drift 14s linear infinite;
-  --animate-pop: pop 0.7s ease-out both;
-  --animate-twinkle: twinkle 1.4s ease-in-out infinite;
-
-  @keyframes bob {
-    0%, 100% { transform: translateY(0) rotate(-4deg); }
-    50% { transform: translateY(-16px) rotate(4deg); }
-  }
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.25; transform: scale(0.7); }
-    50% { opacity: 1; transform: scale(1.15); }
-  }
-  @keyframes sway {
-    0%, 100% { transform: rotate(-2deg); }
-    50% { transform: rotate(2deg); }
-  }
-  @keyframes drift {
-    from { background-position: 0 0, 28px 28px; }
-    to { background-position: 56px 56px, 84px 84px; }
-  }
-  @keyframes pop {
-    0% { opacity: 0; transform: translateY(14px) scale(0.96); }
-    100% { opacity: 1; transform: none; }
-  }
 }
 
-/* Uppercase section label used across the app (11px · .08em · muted). */
+/* Uppercase section label used across the app (.08em tracking · muted). */
 @utility label-caps {
   font-family: var(--font-sans);
   font-weight: 500;
-  font-size: var(--text-11);
+  font-size: var(--text-micro);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--color-muted);
@@ -128,15 +97,6 @@
   background-position: 0 0, 28px 28px;
 }
 
-@utility bg-dots-hero {
-  background-image: radial-gradient(#fff 16%, transparent 17%), radial-gradient(#fff 16%, transparent 17%);
-  background-size: 56px 56px;
-  background-position: 0 0, 28px 28px;
-}
-
-@utility bg-stripes {
-  background: repeating-linear-gradient(135deg, var(--color-pink-soft) 0 8px, var(--color-pink-pale) 8px 16px);
-}
 
 @layer base {
   html {

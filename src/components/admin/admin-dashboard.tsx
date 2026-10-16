@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { DeleteDialog } from "@/components/admin/delete-dialog";
+import { EventDialog } from "@/components/admin/event-dialog";
 import { GuestTable } from "@/components/admin/guest-table";
 import { NewGuestRow } from "@/components/admin/new-guest-row";
 import { SendDialog, type SendTarget } from "@/components/admin/send-dialog";
@@ -13,6 +15,7 @@ import {
   defaultInviteMessage,
   deadlineCountdownLabel,
   event,
+  type EventSettings,
   formatCompactDate,
   formatDayMonth,
   formatHour,
@@ -33,13 +36,18 @@ type AdminDashboardProps = {
   guests: Guest[];
   nowIso: string;
   baseUrl: string;
+  settings: EventSettings;
 };
 
-export function AdminDashboard({ guests, nowIso, baseUrl }: AdminDashboardProps) {
+export function AdminDashboard({ guests, nowIso, baseUrl, settings }: AdminDashboardProps) {
   const [filter, setFilter] = useState<Filter>("all");
   const [query, setQuery] = useState("");
-  const [message, setMessage] = useState(defaultInviteMessage);
+  // Until the hosts edit the text, it follows the event details.
+  const [customMessage, setMessage] = useState<string | null>(null);
+  const message = customMessage ?? defaultInviteMessage(settings);
+  const [editingEvent, setEditingEvent] = useState(false);
   const [target, setTarget] = useState<SendTarget | null>(null);
+  const [deleting, setDeleting] = useState<Guest | null>(null);
   useGuestsRealtime();
 
   const now = useMemo(() => new Date(nowIso), [nowIso]);
@@ -51,7 +59,7 @@ export function AdminDashboard({ guests, nowIso, baseUrl }: AdminDashboardProps)
     (g) => (filter === "all" || g.status === (filter as GuestStatus)) && (!q || g.name.toLowerCase().includes(q)),
   );
 
-  const eventLine = `${event.celebrant.name} · ${event.celebrant.age} ano · ${formatCompactDate(event.startsAt)}, ${formatHour(event.startsAt)} · ${event.venue.name}`;
+  const eventLine = `${event.celebrant.name} · ${event.celebrant.age} ano · ${formatCompactDate(settings.startsAt)}, ${formatHour(settings.startsAt)} · ${settings.venue}`;
 
   return (
     <main className="flex flex-1 justify-center px-5 pt-7 pb-16">
@@ -59,12 +67,15 @@ export function AdminDashboard({ guests, nowIso, baseUrl }: AdminDashboardProps)
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex flex-col gap-1.5">
             <span className="label-caps">{eventLine}</span>
-            <h1 className="m-0 font-sans text-26 leading-[1.2] font-semibold tracking-tight text-ink">Lista de presença</h1>
+            <h1 className="m-0 font-sans text-heading leading-[1.2] font-semibold tracking-tight text-ink">Lista de presença</h1>
           </div>
           <div className="flex flex-wrap gap-2">
-            <div className="flex h-10 items-center gap-2 rounded-full border border-deadline-border bg-deadline-bg px-3.5 font-sans text-12 font-medium text-gold">
-              prazo de confirmação · {formatDayMonth(event.rsvpDeadline)} · {deadlineCountdownLabel(now)}
+            <div className="flex h-10 items-center gap-2 rounded-full border border-deadline-border bg-deadline-bg px-3.5 font-sans text-caption font-medium text-gold">
+              prazo de confirmação · {formatDayMonth(settings.rsvpDeadline)} · {deadlineCountdownLabel(settings.rsvpDeadline, now)}
             </div>
+            <Button variant="secondary" onClick={() => setEditingEvent(true)}>
+              Editar evento
+            </Button>
             <Button
               variant="secondary"
               icon="↗"
@@ -86,16 +97,24 @@ export function AdminDashboard({ guests, nowIso, baseUrl }: AdminDashboardProps)
             </div>
           </div>
           <NewGuestRow onAdded={(guest) => setTarget({ kind: "single", guests: [guest] })} />
-          <GuestTable guests={rows} now={now} onSend={(guest) => setTarget({ kind: "single", guests: [guest] })} />
+          <GuestTable
+            guests={rows}
+            now={now}
+            onSend={(guest) => setTarget({ kind: "single", guests: [guest] })}
+            onDelete={setDeleting}
+          />
         </div>
       </div>
 
+      <EventDialog open={editingEvent} settings={settings} onClose={() => setEditingEvent(false)} />
+      <DeleteDialog guest={deleting} onClose={() => setDeleting(null)} />
       <SendDialog
         target={target}
         message={message}
         onMessageChange={setMessage}
         onClose={() => setTarget(null)}
         baseUrl={baseUrl}
+        settings={settings}
       />
     </main>
   );

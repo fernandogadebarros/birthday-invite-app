@@ -19,14 +19,13 @@ const RSVP_OPTIONS = [
 ] as const;
 
 type RsvpFormProps = {
-  code?: string;
+  code: string;
   name: string;
-  onNameChange: (name: string) => void;
-  initial: PublicGuest | null;
+  initial: PublicGuest;
   onSaved: (guest: PublicGuest) => void;
 };
 
-export function RsvpForm({ code, name, onNameChange, initial, onSaved }: RsvpFormProps) {
+export function RsvpForm({ code, name, initial, onSaved }: RsvpFormProps) {
   const [status, setStatus] = useState<"yes" | "no">(initial?.status === "no" ? "no" : "yes");
   const [hasCompanions, setHasCompanions] = useState((initial?.companions_count ?? 0) > 0);
   const [count, setCount] = useState(Math.max(1, initial?.companions_count ?? 1));
@@ -38,15 +37,15 @@ export function RsvpForm({ code, name, onNameChange, initial, onSaved }: RsvpFor
   const withCompanions = going && hasCompanions;
   const names = parseNames(namesText);
   const total = 1 + (withCompanions ? count : 0);
-  const tooManyNames = withCompanions && names.length > count;
-  const cantSubmit = !name.trim() || tooManyNames || pending;
+  const missingNames = withCompanions ? count - names.length : 0;
+  const namesMismatch = missingNames !== 0;
+  const cantSubmit = namesMismatch || pending;
 
   function submit() {
     setError(null);
     startTransition(async () => {
       const result = await submitRsvp({
         code,
-        name,
         status,
         companionsCount: withCompanions ? count : 0,
         companionsNames: withCompanions ? names : [],
@@ -57,10 +56,10 @@ export function RsvpForm({ code, name, onNameChange, initial, onSaved }: RsvpFor
   }
 
   return (
-    <section className="flex flex-col gap-5 self-start rounded-card border border-line bg-panel p-6">
+    <section className="flex flex-col gap-5 rounded-card border border-line bg-panel p-6">
       <div className="flex flex-col gap-1">
-        <h2 className="m-0 font-sans text-22 leading-[1.2] font-semibold tracking-tight text-ink">Confirmar presença</h2>
-        <span className="font-sans text-12 text-muted">leva menos de um minuto</span>
+        <h2 className="m-0 font-sans text-title leading-[1.2] font-semibold tracking-tight text-ink">Confirmar presença</h2>
+        <span className="font-sans text-caption text-muted">leva menos de um minuto</span>
       </div>
 
       <Input
@@ -68,8 +67,7 @@ export function RsvpForm({ code, name, onNameChange, initial, onSaved }: RsvpFor
         placeholder="Nome e sobrenome"
         autoComplete="name"
         value={name}
-        readOnly={Boolean(code)}
-        onChange={(e) => onNameChange(e.target.value)}
+        readOnly
       />
 
       <div className="flex flex-col gap-2">
@@ -88,8 +86,8 @@ export function RsvpForm({ code, name, onNameChange, initial, onSaved }: RsvpFor
           >
             <CheckboxMark checked={hasCompanions} />
             <span className="flex flex-col gap-0.5">
-              <span className="font-sans text-14 font-medium text-ink">Vou levar acompanhantes</span>
-              <span className="font-sans text-12 text-muted">parentes ou dependentes · até {event.maxCompanions}</span>
+              <span className="font-sans text-body font-medium text-ink">Vou levar acompanhantes</span>
+              <span className="font-sans text-caption text-muted">parentes ou dependentes · até {event.maxCompanions}</span>
             </span>
           </button>
 
@@ -102,18 +100,20 @@ export function RsvpForm({ code, name, onNameChange, initial, onSaved }: RsvpFor
               <Textarea
                 label="Nomes dos acompanhantes"
                 rows={3}
-                placeholder="Um nome por linha"
+                placeholder="Um nome por linha ou separados por vírgula"
                 value={namesText}
                 onChange={(e) => setNamesText(e.target.value)}
-                className="min-h-[88px] bg-panel text-14 leading-[1.6]"
+                className="min-h-[88px] bg-panel text-body leading-[1.6]"
                 hint={
                   <span
                     className={cn(
-                      "font-sans text-11",
-                      tooManyNames ? "text-accent" : names.length === count ? "text-success" : "text-muted",
+                      "font-sans text-micro",
+                      !namesMismatch ? "text-success" : names.length > 0 ? "text-accent" : "text-muted",
                     )}
                   >
                     {names.length} de {count} nomes informados
+                    {missingNames > 0 && names.length > 0 && ` · faltam ${missingNames}`}
+                    {missingNames < 0 && ` · tem ${-missingNames} a mais, ajuste a quantidade ou remova`}
                   </span>
                 }
               />
@@ -123,13 +123,13 @@ export function RsvpForm({ code, name, onNameChange, initial, onSaved }: RsvpFor
       )}
 
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line-subtle pt-[18px]">
-        <span className="font-sans text-12 text-muted">{going ? `${pluralizePeople(total)} no total` : event.copy.missYou}</span>
+        <span className="font-sans text-caption text-muted">{going ? `${pluralizePeople(total)} no total` : event.copy.missYou}</span>
         <Button variant="primary" size="lg" disabled={cantSubmit} onClick={submit}>
           {pending ? "Enviando…" : going ? "Confirmar presença →" : "Enviar resposta →"}
         </Button>
       </div>
       {error && (
-        <p role="alert" className="m-0 font-sans text-12 text-accent">
+        <p role="alert" className="m-0 font-sans text-caption text-accent">
           {error}
         </p>
       )}

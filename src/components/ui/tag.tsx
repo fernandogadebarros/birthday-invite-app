@@ -8,5 +8,5 @@ const TONES = {
 } as const;
 
 export function Tag({ tone = "neutral", children }: { tone?: keyof typeof TONES; children: ReactNode }) {
-  return <span className={cn("rounded-xs bg-selected px-[7px] py-0.5 font-sans text-11", TONES[tone])}>{children}</span>;
+  return <span className={cn("rounded-xs bg-selected px-[7px] py-0.5 font-sans text-micro", TONES[tone])}>{children}</span>;
 }

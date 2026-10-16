@@ -35,14 +35,14 @@ export function Modal({ open, onClose, title, subtitle, children, footer }: Moda
         <div className="flex flex-col">
           <div className="flex items-center justify-between border-b border-line-subtle px-5 py-[18px]">
             <div className="flex flex-col gap-1">
-              <span className="font-sans text-18 font-semibold text-ink">{title}</span>
-              {subtitle && <span className="font-sans text-12 text-muted">{subtitle}</span>}
+              <span className="font-sans text-subtitle font-semibold text-ink">{title}</span>
+              {subtitle && <span className="font-sans text-caption text-muted">{subtitle}</span>}
             </div>
             <button
               type="button"
               aria-label="Fechar"
               onClick={onClose}
-              className="size-8 cursor-pointer rounded-sm border-0 bg-transparent font-sans text-18 text-muted hover:bg-hover"
+              className="size-8 cursor-pointer rounded-sm border-0 bg-transparent font-sans text-subtitle text-muted hover:bg-hover"
             >
               ×
             </button>

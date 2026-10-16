@@ -28,9 +28,10 @@ type GuestTableProps = {
   guests: Guest[];
   now: Date;
   onSend: (guest: Guest) => void;
+  onDelete: (guest: Guest) => void;
 };
 
-export function GuestTable({ guests, now, onSend }: GuestTableProps) {
+export function GuestTable({ guests, now, onSend, onDelete }: GuestTableProps) {
   return (
     <div className="overflow-x-auto">
       <div className="min-w-[640px]">
@@ -46,32 +47,39 @@ export function GuestTable({ guests, now, onSend }: GuestTableProps) {
           return (
             <div key={guest.id} className={`${GRID} items-center border-b border-line-subtle px-4 py-3 hover:bg-hover`}>
               <div className="flex min-w-0 flex-col gap-[3px]">
-                <span className="truncate font-sans text-14 font-medium text-ink">{guest.name}</span>
-                <span className="font-sans text-11 text-muted">{guest.phone ? formatPhone(guest.phone) : "via link genérico"}</span>
+                <span className="truncate font-sans text-body font-medium text-ink">{guest.name}</span>
+                <span className="font-sans text-micro text-muted">{guest.phone ? formatPhone(guest.phone) : "—"}</span>
               </div>
               <div className="flex flex-col items-start gap-1">
                 <Tag tone={status.tone}>{status.label}</Tag>
-                <span className="font-sans text-11 text-faint">{guestActivityLabel(guest, now)}</span>
+                <span className="font-sans text-micro text-faint">{guestActivityLabel(guest, now)}</span>
               </div>
               <div className="flex min-w-0 flex-col gap-[3px]">
-                <span className="font-sans text-13 font-medium text-body">{companionsLabel(guest)}</span>
+                <span className="font-sans text-small font-medium text-body">{companionsLabel(guest)}</span>
                 {guest.status === "yes" && guest.companions_names.length > 0 && (
-                  <span className="truncate font-sans text-11 text-muted">{guest.companions_names.join(", ")}</span>
+                  <span className="truncate font-sans text-micro text-muted">{guest.companions_names.join(", ")}</span>
                 )}
               </div>
-              <div className="flex justify-end">
-                {guest.phone ? (
+              <div className="flex items-center justify-end gap-1.5">
+                {guest.phone && (
                   <Button size="sm" variant={button.variant} onClick={() => onSend(guest)}>
                     {button.label}
                   </Button>
-                ) : (
-                  <span className="font-sans text-11 text-faint">—</span>
                 )}
+                <button
+                  type="button"
+                  aria-label={`Excluir ${guest.name}`}
+                  title="Excluir convidado"
+                  onClick={() => onDelete(guest)}
+                  className="size-8 flex-none cursor-pointer rounded-full border-0 bg-transparent font-sans text-lead text-muted hover:bg-hover hover:text-accent"
+                >
+                  ×
+                </button>
               </div>
             </div>
           );
         })}
-        {guests.length === 0 && <div className="p-8 text-center font-sans text-12 text-muted">nenhum convidado neste filtro</div>}
+        {guests.length === 0 && <div className="p-8 text-center font-sans text-caption text-muted">nenhum convidado neste filtro</div>}
       </div>
     </div>
   );

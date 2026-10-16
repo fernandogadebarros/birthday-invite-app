@@ -19,7 +19,7 @@ const VARIANTS: Record<Variant, string> = {
 export function buttonClasses({ variant = "primary", size = "md" }: { variant?: Variant; size?: Size } = {}) {
   return cn(
     "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full border",
-    "font-sans text-13 font-medium transition-[filter,background-color] duration-150",
+    "font-sans text-small font-medium transition-[filter,background-color] duration-150",
     "disabled:cursor-not-allowed disabled:opacity-45",
     SIZES[size],
     VARIANTS[variant],

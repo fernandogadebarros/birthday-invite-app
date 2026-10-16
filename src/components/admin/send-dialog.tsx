@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { markSent } from "@/actions/guest-actions";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
-import { ogDescription, ogTitle } from "@/lib/event";
+import { ogDescription, ogTitle, type EventSettings } from "@/lib/event";
 import { firstName, formatPhone } from "@/lib/format";
 import type { Guest } from "@/lib/guest";
 import { fillMessage, inviteText, inviteUrl, whatsappUrl } from "@/lib/whatsapp";
@@ -17,9 +17,10 @@ type SendDialogProps = {
   onMessageChange: (message: string) => void;
   onClose: () => void;
   baseUrl: string;
+  settings: EventSettings;
 };
 
-export function SendDialog({ target, message, onMessageChange, onClose, baseUrl }: SendDialogProps) {
+export function SendDialog({ target, message, onMessageChange, onClose, baseUrl, settings }: SendDialogProps) {
   const [index, setIndex] = useState(0);
   const [copied, setCopied] = useState(false);
   const [, startTransition] = useTransition();
@@ -96,9 +97,9 @@ export function SendDialog({ target, message, onMessageChange, onClose, baseUrl 
           rows={4}
           value={message}
           onChange={(e) => onMessageChange(e.target.value)}
-          className="resize-y rounded-card border border-line bg-card px-3.5 py-3 font-sans text-13 leading-[1.6] text-ink outline-none focus:border-line-strong"
+          className="resize-y rounded-card border border-line bg-card px-3.5 py-3 font-sans text-small leading-[1.6] text-ink outline-none focus:border-line-strong"
         />
-        <span className="font-sans text-11 text-muted">{"{nome}"} vira o nome de cada convidado · o link já vai personalizado</span>
+        <span className="font-sans text-micro text-muted">{"{nome}"} vira o nome de cada convidado · o link já vai personalizado</span>
       </div>
 
       <div className="flex flex-col gap-2">
@@ -109,15 +110,15 @@ export function SendDialog({ target, message, onMessageChange, onClose, baseUrl 
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/opengraph-image" alt="" className="block aspect-[1200/630] w-full object-cover" />
               <div className="flex flex-col gap-0.5 px-2.5 py-2">
-                <span className="font-sans text-12 font-semibold text-ink">{ogTitle()}</span>
-                <span className="font-sans text-11 text-secondary">{ogDescription()}</span>
-                <span className="font-sans text-[10px] text-muted">{host}</span>
+                <span className="font-sans text-caption font-semibold text-ink">{ogTitle()}</span>
+                <span className="font-sans text-micro text-secondary">{ogDescription(settings)}</span>
+                <span className="font-sans text-tiny text-muted">{host}</span>
               </div>
             </div>
-            <span className="px-2 font-sans text-13 leading-[1.5] whitespace-pre-wrap text-ink">
+            <span className="px-2 font-sans text-small leading-[1.5] whitespace-pre-wrap text-ink">
               {fillMessage(message, current?.name ?? "")}
             </span>
-            <span className="px-2 font-sans text-12 break-all text-success">{link}</span>
+            <span className="px-2 font-sans text-caption break-all text-success">{link}</span>
           </div>
         </div>
       </div>
