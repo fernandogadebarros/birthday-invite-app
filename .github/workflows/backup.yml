@@ -25,7 +25,7 @@ jobs:
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
-          pg_dump "$SUPABASE_DB_URL" --schema=public --no-owner --no-privileges --file=backup.sql
+          /usr/lib/postgresql/17/bin/pg_dump "$SUPABASE_DB_URL" --schema=public --no-owner --no-privileges --file=backup.sql
           test -s backup.sql
 
       # The repository is public and so are its artifacts, and the dump holds guest names
