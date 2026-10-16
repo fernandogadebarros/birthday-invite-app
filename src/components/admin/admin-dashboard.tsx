@@ -101,6 +101,7 @@ export function AdminDashboard({ guests, nowIso, baseUrl, settings }: AdminDashb
             guests={rows}
             now={now}
             onSend={(guest) => setTarget({ kind: "single", guests: [guest] })}
+            onPreview={(guest) => setTarget({ kind: "preview", guests: [guest] })}
             onDelete={setDeleting}
           />
         </div>
