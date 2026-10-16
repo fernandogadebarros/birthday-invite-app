@@ -117,3 +117,20 @@ test("admin can delete a guest after confirming", async ({ page }) => {
   await dialog.getByRole("button", { name: "Excluir", exact: true }).click();
   await expect(page.getByText("Para Excluir")).toHaveCount(0);
 });
+
+test("admin can preview an invite without sending it", async ({ page, context }) => {
+  let opened = false;
+  await context.route("https://wa.me/**", (route) => {
+    opened = true;
+    return route.fulfill({ body: "whatsapp" });
+  });
+  await login(page);
+
+  await page.getByRole("button", { name: "Ver prévia do convite de Marina Costa" }).click();
+  const dialog = page.getByRole("dialog", { name: "Prévia do convite de Marina" });
+  await expect(dialog.getByText("/invite/marina-k7q2")).toBeVisible();
+  await expect(dialog.getByRole("button", { name: /Abrir no WhatsApp/ })).toHaveCount(0);
+  await dialog.getByRole("button", { name: "Fechar" }).click();
+  await expect(dialog).toBeHidden();
+  expect(opened).toBe(false);
+});

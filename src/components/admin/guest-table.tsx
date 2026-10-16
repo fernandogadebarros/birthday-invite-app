@@ -4,7 +4,7 @@ import { formatPhone } from "@/lib/format";
 import type { Guest } from "@/lib/guest";
 import { guestActivityLabel } from "@/lib/guest-stats";
 
-const GRID = "grid grid-cols-[minmax(0,2fr)_minmax(0,1.1fr)_minmax(0,1.6fr)_150px] gap-3";
+const GRID = "grid grid-cols-[minmax(0,2fr)_minmax(0,1.1fr)_minmax(0,1.6fr)_210px] gap-3";
 
 const STATUS = {
   yes: { tone: "accent", label: "● vai" },
@@ -28,10 +28,11 @@ type GuestTableProps = {
   guests: Guest[];
   now: Date;
   onSend: (guest: Guest) => void;
+  onPreview: (guest: Guest) => void;
   onDelete: (guest: Guest) => void;
 };
 
-export function GuestTable({ guests, now, onSend, onDelete }: GuestTableProps) {
+export function GuestTable({ guests, now, onSend, onPreview, onDelete }: GuestTableProps) {
   return (
     <div className="overflow-x-auto">
       <div className="min-w-[640px]">
@@ -61,6 +62,9 @@ export function GuestTable({ guests, now, onSend, onDelete }: GuestTableProps) {
                 )}
               </div>
               <div className="flex items-center justify-end gap-1.5">
+                <Button size="sm" variant="ghost" onClick={() => onPreview(guest)} aria-label={`Ver prévia do convite de ${guest.name}`}>
+                  Prévia
+                </Button>
                 {guest.phone && (
                   <Button size="sm" variant={button.variant} onClick={() => onSend(guest)}>
                     {button.label}
