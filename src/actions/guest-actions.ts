@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 import type { Guest } from "@/lib/guest";
 import { createGuestCode } from "@/lib/guest-code";
 import { newGuestSchema } from "@/lib/rsvp-schema";
@@ -36,6 +37,18 @@ export async function addGuest(input: { name: string; phone: string }): Promise<
     if (error.code !== UNIQUE_VIOLATION) break;
   }
   return { ok: false, error: "Não foi possível adicionar o convidado." };
+}
+
+export type DeleteGuestResult = { ok: true } | { ok: false; error: string };
+
+export async function deleteGuest(id: string): Promise<DeleteGuestResult> {
+  const supabase = await requireAdmin();
+  if (!z.uuid().safeParse(id).success) return { ok: false, error: "Convidado inválido." };
+
+  const { error } = await supabase.from("guests").delete().eq("id", id);
+  if (error) return { ok: false, error: "Não foi possível excluir o convidado." };
+  revalidatePath("/admin");
+  return { ok: true };
 }
 
 export async function markSent(ids: string[]): Promise<void> {

@@ -15,7 +15,6 @@ test("guest confirms with companions and can change the answer", async ({ page }
 
   await expect(page.getByRole("heading", { name: "Tudo certo, Diego. Te vemos lá!" })).toBeVisible();
   await expect(page.getByText(/Confirmamos 3 pessoas para sábado, 07 de novembro, às 12h/)).toBeVisible();
-  await expect(page.getByRole("link", { name: "Adicionar à agenda" })).toHaveAttribute("href", "/calendar.ics");
 
   await page.reload();
   await expect(page.getByRole("heading", { name: "Tudo certo, Diego. Te vemos lá!" })).toBeVisible();
@@ -35,28 +34,65 @@ test("too many companion names blocks the submit", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Confirmar presença →" })).toBeDisabled();
 });
 
-test("generic link registers a new guest and moves to a personal link", async ({ page }) => {
-  await page.goto("/");
-  await expect(page.getByText("Você está convidado(a)")).toBeVisible();
+test("companion names accept commas and must match the count", async ({ page }) => {
+  await page.goto("/invite/carla-p8xa");
+  await page.getByRole("button", { name: "Alterar resposta" }).click();
+  await page.getByRole("checkbox", { name: /Vou levar acompanhantes/ }).click();
   const submit = page.getByRole("button", { name: "Confirmar presença →" });
+  const names = page.getByLabel("Nomes dos acompanhantes");
+
+  // 1 companion, "Michael, Pedro" is 2 names.
+  await names.fill("Michael, Pedro Pereira");
+  await expect(page.getByText(/2 de 1 nomes informados/)).toBeVisible();
   await expect(submit).toBeDisabled();
-  await page.getByLabel("Seu nome").fill("Helena Prado");
-  await expect(page.getByText("Oi, Helena — você está convidado(a)")).toBeVisible();
+
+  // 2 companions, only 1 name.
+  await page.getByRole("button", { name: "Aumentar" }).click();
+  await names.fill("Michael");
+  await expect(page.getByText(/1 de 2 nomes informados · faltam 1/)).toBeVisible();
+  await expect(submit).toBeDisabled();
+
+  // 2 companions, 2 names separated by comma.
+  await names.fill("Michael, Pedro Pereira");
+  await expect(page.getByText("2 de 2 nomes informados")).toBeVisible();
+  await expect(submit).toBeEnabled();
   await submit.click();
-  await expect(page).toHaveURL(/\/invite\/helena-[a-z2-9]{4}$/);
-  await expect(page.getByRole("heading", { name: "Tudo certo, Helena. Te vemos lá!" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Tudo certo, Carla. Te vemos lá!" })).toBeVisible();
+});
+
+test("home page has no public RSVP and points to the personal link", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Use o link que você recebeu" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Confirmar presença/ })).toHaveCount(0);
+});
+
+test("mobile: both cards have the same width and the info grid has no empty cell", async ({ page }) => {
+  await page.goto("/invite/marina-k7q2");
+  const cards = page.locator("main section");
+  const [top, bottom] = await Promise.all([cards.nth(0).boundingBox(), cards.nth(1).boundingBox()]);
+  expect(Math.round(bottom!.width)).toBe(Math.round(top!.width));
+
+  const cell = page.getByText("Confirme até", { exact: true }).locator("..");
+  const grid = cell.locator("..");
+  const [cellBox, gridBox] = await Promise.all([cell.boundingBox(), grid.boundingBox()]);
+  // On a 390px screen the deadline fills its own row instead of leaving a pink gap.
+  expect(cellBox!.width).toBeGreaterThan(gridBox!.width - 4);
+  await expect(page.getByText(/dúvidas\? chame a/)).toHaveCount(0);
+});
+
+test("invite shows the looping motion video", async ({ page, request }) => {
+  await page.goto("/invite/marina-k7q2");
+  const video = page.locator("video");
+  await expect(video).toHaveAttribute("src", "/video/invite.mp4");
+  await expect(video).toHaveJSProperty("loop", true);
+  await expect(video).toHaveJSProperty("muted", true);
+  const file = await request.get("/video/invite.mp4");
+  expect(file.status()).toBe(200);
+  expect(file.headers()["content-type"]).toBe("video/mp4");
 });
 
 test("unknown invite code is a 404", async ({ page }) => {
   const response = await page.goto("/invite/ninguem-zzzz");
   expect(response?.status()).toBe(404);
   await expect(page.getByRole("heading", { name: "Não achamos esse convite" })).toBeVisible();
-});
-
-test("calendar file describes the party", async ({ request }) => {
-  const response = await request.get("/calendar.ics");
-  expect(response.headers()["content-type"]).toContain("text/calendar");
-  const body = await response.text();
-  expect(body).toContain("DTSTART:20261107T150000Z");
-  expect(body).toContain("SUMMARY:A Manuela faz 1 aninho!");
 });

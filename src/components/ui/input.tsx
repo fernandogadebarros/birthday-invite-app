@@ -25,7 +25,7 @@ export function Input({ label, icon, className, id, ...rest }: InputProps) {
         <input
           id={inputId}
           className={cn(
-            "min-w-0 flex-1 border-0 bg-transparent font-sans text-13 text-ink outline-none focus-visible:outline-none",
+            "min-w-0 flex-1 border-0 bg-transparent font-sans text-small text-ink outline-none focus-visible:outline-none",
             className,
           )}
           {...rest}

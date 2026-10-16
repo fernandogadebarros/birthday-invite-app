@@ -91,3 +91,29 @@ test("admin list updates by itself when a guest confirms", async ({ page, browse
   // No reload on the admin tab: the row flips through Supabase Realtime.
   await expect(row.getByText("● vai")).toBeVisible({ timeout: 10_000 });
 });
+
+test("admin can delete a guest after confirming", async ({ page }) => {
+  await login(page);
+  await page.getByLabel("Novo convidado").fill("Para Excluir");
+  await page.getByLabel("WhatsApp").fill("11988887777");
+  await page.getByRole("button", { name: "Adicionar e enviar →" }).click();
+  const sendDialog = page.getByRole("dialog", { name: "Enviar convite para Para" });
+  await expect(sendDialog).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(sendDialog).toBeHidden();
+
+  const row = page.locator("div.grid", { hasText: "Para Excluir" });
+  await expect(row).toBeVisible();
+
+  // Cancel keeps the guest.
+  await row.getByRole("button", { name: "Excluir Para Excluir" }).click();
+  const dialog = page.getByRole("dialog", { name: "Excluir convidado" });
+  await expect(dialog.getByText("Essa ação não pode ser desfeita.")).toBeVisible();
+  await dialog.getByRole("button", { name: "Cancelar" }).click();
+  await expect(row).toBeVisible();
+
+  // Confirm removes it.
+  await row.getByRole("button", { name: "Excluir Para Excluir" }).click();
+  await dialog.getByRole("button", { name: "Excluir", exact: true }).click();
+  await expect(page.getByText("Para Excluir")).toHaveCount(0);
+});

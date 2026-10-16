@@ -14,10 +14,9 @@ export function computeStats(guests: Pick<Guest, "status" | "companions_count">[
 }
 
 /** Secondary line under the status tag: "há 3h", "enviado há 2d", "não enviado". */
-export function guestActivityLabel(guest: Pick<Guest, "status" | "sent_at" | "responded_at" | "source">, now = new Date()): string {
+export function guestActivityLabel(guest: Pick<Guest, "status" | "sent_at" | "responded_at">, now = new Date()): string {
   if (guest.status !== "pending" && guest.responded_at) {
-    const when = formatRelative(guest.responded_at, now);
-    return guest.source === "generic" ? `via link · ${when}` : when;
+    return formatRelative(guest.responded_at, now);
   }
   if (guest.sent_at) return `enviado ${formatRelative(guest.sent_at, now)}`;
   return "não enviado";

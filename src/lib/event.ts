@@ -1,32 +1,39 @@
-// Single source of truth for the party. Everything shown to guests and admins
-// (dates, place, copy, WhatsApp message) is derived from this object.
+// Fixed facts and copy about the party. The details the hosts edit in the admin
+// area (date, time, RSVP deadline, venue) live in the database; `defaultEventSettings`
+// is only the starting value used before anything is saved.
+export type EventSettings = {
+  /** ISO instant with offset, e.g. 2026-11-07T12:00:00-03:00 */
+  startsAt: string;
+  /** Last moment guests can answer */
+  rsvpDeadline: string;
+  /** Free text: place name and/or address; also drives the map link */
+  venue: string;
+};
+
+export const defaultEventSettings: EventSettings = {
+  startsAt: "2026-11-07T12:00:00-03:00",
+  rsvpDeadline: "2026-10-31T23:59:59-03:00",
+  venue: "Clube do Jaraguá",
+};
+
 export const event = {
   celebrant: {
     name: "Manuela",
     nickname: "Manu",
     age: 1,
   },
-  startsAt: "2026-11-07T12:00:00-03:00",
-  durationHours: 4,
-  rsvpDeadline: "2026-10-31T23:59:59-03:00",
   timeZone: "America/Sao_Paulo",
-  venue: {
-    name: "Clube do Jaraguá",
-    // TODO: endereço completo ainda a confirmar.
-    address: "Clube do Jaraguá",
-    mapsUrl: "https://www.google.com/maps/search/?api=1&query=Clube+do+Jaragu%C3%A1",
-  },
   contact: {
-    name: "Carol",
+    name: "Veronica",
     relation: "mãe da Manu",
-    // Placeholder: only digits, with DDD, without +55.
-    phone: "11988880000",
+    // Only digits, with DDD, without +55.
+    phone: "11985798777",
   },
   // Placeholder domain shown in the WhatsApp preview; the real link uses NEXT_PUBLIC_SITE_URL.
   domain: "manu1.rsvp.app",
   maxCompanions: 5,
   copy: {
-    brand: "festa da manu",
+    brand: "Festa da Manu",
     title: "Venha comemorar comigo!",
     description:
       "Vamos comemorar o primeiro ano da Manu com um almoço no clube, bolo, brincadeiras e as pessoas que ela mais ama. Confirme até o prazo pra gente acertar o buffet e as lembrancinhas.",
@@ -112,12 +119,17 @@ export function ageLabel(age: number = event.celebrant.age): string {
   return age === 1 ? "aninho" : "aninhos";
 }
 
-export function isRsvpClosed(now: Date = new Date(), deadline: string = event.rsvpDeadline): boolean {
+/** Google Maps search for whatever the hosts typed in the venue field. */
+export function mapsUrl(venue: string): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(venue.trim())}`;
+}
+
+export function isRsvpClosed(deadline: string, now: Date = new Date()): boolean {
   return now.getTime() > new Date(deadline).getTime();
 }
 
 /** Whole calendar days from `now` until the deadline day (0 on the deadline day). */
-export function daysUntilDeadline(now: Date = new Date(), deadline: string = event.rsvpDeadline): number {
+export function daysUntilDeadline(deadline: string, now: Date = new Date()): number {
   const toDayNumber = (d: Date) => {
     const p = dateParts(d);
     return Date.UTC(p.year, p.month, p.day) / 86_400_000;
@@ -126,20 +138,20 @@ export function daysUntilDeadline(now: Date = new Date(), deadline: string = eve
 }
 
 /** "faltam 18 dias" / "último dia" / "encerrado" */
-export function deadlineCountdownLabel(now: Date = new Date()): string {
-  if (isRsvpClosed(now)) return "encerrado";
-  const days = daysUntilDeadline(now);
+export function deadlineCountdownLabel(deadline: string, now: Date = new Date()): string {
+  if (isRsvpClosed(deadline, now)) return "encerrado";
+  const days = daysUntilDeadline(deadline, now);
   if (days === 0) return "último dia";
   return days === 1 ? "falta 1 dia" : `faltam ${days} dias`;
 }
 
 /** Default WhatsApp message; `{nome}` becomes each guest's first name. */
-export function defaultInviteMessage(): string {
+export function defaultInviteMessage(settings: EventSettings): string {
   const { nickname, age } = event.celebrant;
   return (
-    `Oi, {nome}! A ${nickname} vai fazer ${age} ${ageLabel(age)} no dia ${formatNumericDayMonth(event.startsAt)}, ` +
-    `às ${formatHour(event.startsAt)}, no ${event.venue.name}, e a gente quer muito você lá. ` +
-    `Confirma sua presença até ${formatNumericDayMonth(event.rsvpDeadline)} por aqui:`
+    `Oi, {nome}! A ${nickname} vai fazer ${age} ${ageLabel(age)} no dia ${formatNumericDayMonth(settings.startsAt)}, ` +
+    `às ${formatHour(settings.startsAt)}, em ${settings.venue}, e a gente quer muito você lá. ` +
+    `Confirma sua presença até ${formatNumericDayMonth(settings.rsvpDeadline)} por aqui:`
   );
 }
 
@@ -148,8 +160,8 @@ export function ogTitle(): string {
   return `A ${name} faz ${age} ${ageLabel(age)}!`;
 }
 
-export function ogDescription(): string {
-  return `${formatShortDate(event.startsAt)} · ${formatHour(event.startsAt)} · confirme sua presença`;
+export function ogDescription(settings: EventSettings): string {
+  return `${formatShortDate(settings.startsAt)} · ${formatHour(settings.startsAt)} · confirme sua presença`;
 }
 
 export function siteUrl(): string {

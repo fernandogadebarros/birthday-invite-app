@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { event, ogDescription, ogTitle, siteUrl } from "@/lib/event";
+import { ageLabel, event, ogTitle, siteUrl } from "@/lib/event";
 import "./globals.css";
 
 // Same woff2 files Google Fonts serves to browsers (and the prototype uses).
@@ -20,11 +20,11 @@ const greatVibes = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
-  title: `${event.copy.brand} · ${event.celebrant.age} ano`,
-  description: ogDescription(),
+  title: `${event.copy.brand} · ${event.celebrant.age} ${ageLabel()}`,
+  description: `Confirme sua presença na festa da ${event.celebrant.nickname}`,
   openGraph: {
     title: ogTitle(),
-    description: ogDescription(),
+    description: `Confirme sua presença na festa da ${event.celebrant.nickname}`,
     type: "website",
     locale: "pt_BR",
   },
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1d1418",
+  themeColor: "#3d2a32",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

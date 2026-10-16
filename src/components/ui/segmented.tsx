@@ -26,7 +26,7 @@ export function Segmented<T extends string>({ options, value, onChange, label }:
     <div
       role="radiogroup"
       aria-label={label}
-      className="inline-flex rounded-sm border border-line-subtle bg-hover p-0.5 font-sans text-12 font-medium"
+      className="inline-flex rounded-sm border border-line-subtle bg-hover p-0.5 font-sans text-caption font-medium"
     >
       {options.map((option, index) => {
         const active = option.value === value;

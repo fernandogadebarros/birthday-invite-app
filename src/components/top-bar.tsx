@@ -1,23 +1,32 @@
+import Image from "next/image";
 import type { ReactNode } from "react";
-import { event } from "@/lib/event";
+import { ageLabel, event } from "@/lib/event";
 
 export function TopBar({ children }: { children?: ReactNode }) {
+  const { age } = event.celebrant;
   return (
-    <header className="sticky top-0 z-[5] flex min-h-14 flex-wrap items-center justify-between gap-x-4 gap-y-2.5 border-b border-line-subtle bg-top-bar px-5 py-2.5">
-      <div className="flex items-center gap-2.5 font-sans text-16 font-semibold text-white">
-        <span aria-hidden className="flex items-center gap-0.5">
-          <span className="size-3 rounded-full bg-ink shadow-ring-top-bar" />
-          <span className="size-4 rounded-full bg-accent shadow-ring-top-bar" />
-          <span className="size-3 rounded-full bg-ink shadow-ring-top-bar" />
-        </span>
+    <header className="sticky top-0 z-[5] flex min-h-16 flex-col items-center justify-center gap-2.5 border-b border-line-subtle bg-top-bar px-5 py-2.5 sm:grid sm:grid-cols-[1fr_auto_1fr]">
+      <div className="flex items-center gap-3 font-sans text-lead font-semibold text-white sm:col-start-2">
+        <Image
+          src="/images/minni-logo.png"
+          alt=""
+          width={456}
+          height={480}
+          priority
+          className="h-10 w-auto"
+        />
         <span>
           {event.copy.brand}
-          <span className="text-pink-soft">
-            {" "}· {event.celebrant.age} {event.celebrant.age === 1 ? "ano" : "anos"}
+          <span className="text-hero">
+            {" "}· {age} {ageLabel(age)}
           </span>
         </span>
       </div>
-      {children && <div className="flex flex-wrap items-center justify-end gap-4">{children}</div>}
+      {children && (
+        <div className="flex flex-wrap items-center justify-center gap-4 sm:col-start-3 sm:row-start-1 sm:justify-end">
+          {children}
+        </div>
+      )}
     </header>
   );
 }

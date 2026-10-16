@@ -47,6 +47,31 @@ export type Database = {
         };
         Relationships: [];
       };
+      event_settings: {
+        Row: {
+          id: number;
+          rsvp_deadline: string;
+          starts_at: string;
+          updated_at: string;
+          venue: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          id?: number;
+          rsvp_deadline: string;
+          starts_at: string;
+          updated_at?: string;
+          venue: string;
+        };
+        Update: {
+          id?: number;
+          rsvp_deadline?: string;
+          starts_at?: string;
+          updated_at?: string;
+          venue?: string;
+        };
+        Relationships: [];
+      };
       guests: {
         Row: {
           code: string;

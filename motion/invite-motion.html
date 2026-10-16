@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Invite motion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; background: #fbe6ec; }
+  #stage { position: relative; width: 1080px; height: 1400px; overflow: hidden; transform-origin: 0 0; }
+  #stage > * { position: absolute; }
+  .abs { position: absolute; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+// Port of design/invite-motion-elegante.jsx to plain DOM so frames can be rendered
+// deterministically (window.renderFrame(t)). Dates, venue and the confirmation link
+// are intentionally not part of the video: only the title and "Espero você!".
+const W = 1080, H = 1400;
+const TOTAL = 18;
+const CUES = { Abertura: 0, Minnie: 2.5, Nome: 5.5, Festa: 9, Convite: 14 }; // from the scene durations 2.5 / 3 / 3.5 / 5 / 4
+const GOLD = '#b8893a', GOLD_L = '#e2c27a', ROSE = '#c8507e', INK = '#4a2a36', BLUSH = '#fbe6ec';
+
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, k) => a + (b - a) * k;
+const easeOutQuart = (x) => 1 - Math.pow(1 - x, 4);
+const easeInOutSine = (x) => -(Math.cos(Math.PI * x) - 1) / 2;
+const easeInCubic = (x) => x * x * x;
+const anim = (ease) => (T, s, e) => ease(clamp((T - s) / (e - s), 0, 1));
+const rise = anim(easeOutQuart), glide = anim(easeInOutSine), fade = anim(easeInCubic);
+const rnd = (i) => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+
+const GLITTER = Array.from({ length: 70 }, (_, i) => ({ x: rnd(i) * 1080, y: rnd(i + 99) * 1920, s: 3 + rnd(i + 7) * 7, ph: rnd(i + 11) * 6.28, star: i % 6 === 0 }));
+const BOKEH = Array.from({ length: 14 }, (_, i) => ({ x: rnd(i + 200) * 1080, y: rnd(i + 300) * H, r: 60 + rnd(i + 400) * 160, c: i % 3 === 0 ? 'rgba(226,194,122,.28)' : 'rgba(240,150,185,.30)', ph: rnd(i + 500) * 6.28 }));
+const BALLOONS = [
+  { x: 40, y: 330, s: 170, g: ['#f7b6cc', '#d9608f'], p: 0 }, { x: 170, y: 520, s: 120, g: ['#f3dca4', '#b8893a'], p: 1.6 },
+  { x: 860, y: 300, s: 180, g: ['#f3dca4', '#b8893a'], p: .8 }, { x: 790, y: 520, s: 120, g: ['#fde9f0', '#e9a7c0'], p: 2.4 },
+  { x: 930, y: 640, s: 110, g: ['#f7b6cc', '#d9608f'], p: 3.1 }, { x: 30, y: 700, s: 100, g: ['#fde9f0', '#e9a7c0'], p: 2 },
+];
+
+const stage = document.getElementById('stage');
+const el = (html) => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content.firstChild; };
+const add = (node) => { stage.appendChild(node); return node; };
+
+// Backdrop
+const backdrop = add(el(`<div style="inset:0;background:radial-gradient(ellipse at 50% 38%, #fff7f9 0%, ${BLUSH} 45%, #f4c6d4 100%)"></div>`));
+backdrop.appendChild(el(`<div class="abs" style="inset:0;background-image:radial-gradient(rgba(255,255,255,.75) 14%, transparent 15%);background-size:72px 72px;opacity:.35"></div>`));
+const bokeh = BOKEH.map((b) => backdrop.appendChild(el(`<div class="abs" style="left:${b.x - b.r}px;width:${b.r * 2}px;height:${b.r * 2}px;border-radius:50%;background:${b.c};filter:blur(28px)"></div>`)));
+
+// Balloons
+const balloons = BALLOONS.map((b) => add(el(`<div style="left:${b.x}px;width:${b.s}px;display:flex;flex-direction:column;align-items:center;transform-origin:50% 100%">
+  <div style="position:relative;width:${b.s}px;height:${b.s * 1.18}px;border-radius:50% 50% 48% 52% / 58% 58% 42% 42%;background:radial-gradient(circle at 32% 28%, #fff 0 6%, ${b.g[0]} 22%, ${b.g[1]} 100%);box-shadow:0 20px 40px rgba(160,60,100,.18)"></div>
+  <div style="width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:11px solid ${b.g[1]};margin-top:-2px"></div>
+  <div style="width:2px;height:${b.s * 1.6}px;background:linear-gradient(${GOLD_L}, rgba(184,137,58,0))"></div></div>`)));
+
+// Minnie (body + arm slices, arm pivots at the shoulder)
+const mh = 620, mw = mh * 820 / 1302;
+const minnie = add(el(`<div style="left:50%;top:500px;height:${mh}px;width:${mw}px">
+  <div class="abs" style="left:-30%;right:-30%;bottom:-4%;height:26%;border-radius:50%;background:radial-gradient(ellipse, rgba(255,255,255,.95), rgba(255,255,255,0) 70%)"></div>
+  <div class="mrig abs" style="inset:0;transform-origin:45% 100%;filter:drop-shadow(0 24px 30px rgba(140,50,90,.22))">
+    <img src="../public/images/minnie2-body.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill">
+    <img class="marm" src="../public/images/minnie2-arm.png" style="position:absolute;inset:0;width:100%;height:100%;object-fit:fill;transform-origin:57.3% 49.9%">
+  </div></div>`));
+const mrig = minnie.querySelector('.mrig'), marm = minnie.querySelector('.marm');
+
+// Glitter
+const glitter = GLITTER.map((g, i) => add(g.star
+  ? el(`<span style="left:${g.x}px;font-size:${g.s * 5}px;color:${GOLD_L};text-shadow:0 0 12px rgba(226,194,122,.9)">✦</span>`)
+  : el(`<div style="left:${g.x}px;width:${g.s}px;height:${g.s}px;border-radius:50%;background:${i % 2 ? GOLD_L : '#fff'};box-shadow:0 0 ${g.s * 2}px ${i % 2 ? 'rgba(226,194,122,.9)' : 'rgba(255,255,255,.9)'}"></div>`)));
+
+// Title (kept from the design)
+add(el(`<div style="left:0;right:0;top:110px;display:flex;flex-direction:column;align-items:center">
+  <span style="font:500 30px 'Cormorant Garamond', serif;letter-spacing:.42em;text-transform:uppercase;color:${INK}">o primeiro aninho de</span>
+  <div style="font:400 240px/1.15 'Great Vibes', cursive;color:${GOLD};text-shadow:0 2px 0 #fff, 0 10px 30px rgba(184,137,58,.35);padding:0 50px;margin-top:-6px">Manuela</div>
+  <div style="display:flex;align-items:center;gap:26px;margin-top:-18px">
+    <span style="width:120px;height:1.5px;background:${GOLD}"></span>
+    <span style="font:500 64px 'Cormorant Garamond', serif;color:${ROSE};letter-spacing:.06em">1 ano</span>
+    <span style="width:120px;height:1.5px;background:${GOLD}"></span></div></div>`));
+
+// Closing line (the date, time, venue and confirmation link are not in the video)
+add(el(`<div style="left:0;right:0;top:1160px;display:flex;justify-content:center">
+  <span style="font:400 130px/1 'Great Vibes', cursive;color:${ROSE}">Espero você!</span></div>`));
+
+// Double gold frame
+add(el(`<div style="inset:44px;pointer-events:none">
+  <div class="abs" style="inset:0;border:2px solid ${GOLD};border-radius:40px"></div>
+  <div class="abs" style="inset:14px;border:1px solid rgba(184,137,58,.45);border-radius:30px"></div></div>`));
+
+function minniePose(T) {
+  const w = Math.PI * 2 / TOTAL;
+  const env = (a, b, c, d) => glide(T, a, b) * (1 - glide(T, c, d));
+  const hi = env(CUES.Nome + 0.4, CUES.Nome + 1.2, CUES.Nome + 2.6, CUES.Nome + 3.4);
+  const bye = env(CUES.Convite + 0.8, CUES.Convite + 1.6, CUES.Convite + 2.8, CUES.Convite + 3.6);
+  const wave = (hi + bye) * Math.sin((T - CUES.Nome) * 3.2) * 7;
+  const idleArm = Math.sin(T * w * 6) * 1.5;
+  return { lean: Math.sin(T * w * 4) * 1.4, breathe: Math.sin(T * w * 9) * 0.008, arm: idleArm + wave - (hi + bye) * 3 };
+}
+
+// Everything is a pure function of T (seconds, 0 <= T < TOTAL), so the video loops seamlessly.
+window.renderFrame = function (T) {
+  const out = fade(T, TOTAL - 1.4, TOTAL - 0.1);
+  const phase = (T / TOTAL) * Math.PI * 2;
+  const breathe = 0.5 + 0.5 * Math.sin(phase);
+
+  bokeh.forEach((node, i) => {
+    const b = BOKEH[i];
+    node.style.top = `${b.y - b.r + Math.sin(phase + b.ph) * 30}px`;
+    node.style.opacity = 0.6 + breathe * 0.4;
+  });
+
+  balloons.forEach((node, i) => {
+    const b = BALLOONS[i];
+    const k = rise(T, 0.4 + i * 0.18, 2.6 + i * 0.18);
+    const y = lerp(b.y + 500, b.y, k) + Math.sin(T * 1.1 + b.p) * 16 - out * 1400;
+    node.style.top = `${y}px`;
+    node.style.opacity = k * (1 - out);
+    node.style.transform = `rotate(${Math.sin(T * 0.8 + b.p) * 4}deg)`;
+  });
+
+  const k = rise(T, CUES.Minnie - 1.2, CUES.Minnie + 1.2);
+  const float = Math.sin(phase * 5) * 10;
+  const pose = minniePose(T);
+  minnie.style.opacity = k * (1 - out);
+  minnie.style.filter = `blur(${(1 - k) * 12}px)`;
+  minnie.style.transform = `translate(-50%, ${(1 - k) * 50 + float}px) scale(${0.92 + k * 0.08})`;
+  mrig.style.transform = `rotate(${pose.lean}deg) scale(${1 - pose.breathe * 0.5}, ${1 + pose.breathe})`;
+  marm.style.transform = `rotate(${pose.arm}deg)`;
+
+  glitter.forEach((node, i) => {
+    const g = GLITTER[i];
+    const y = (g.y - (T / TOTAL) * 1920 + 1920 * 4) % 1920;
+    const tw = 0.4 + 0.6 * Math.abs(Math.sin(T * 1.8 + g.ph));
+    node.style.top = `${y}px`;
+    node.style.opacity = tw;
+    if (g.star) node.style.transform = `rotate(${T * 20 + i}deg) scale(${0.6 + tw * 0.5})`;
+  });
+};
+
+window.TOTAL = TOTAL;
+window.fitTo = (width) => { stage.style.transform = `scale(${width / W})`; };
+window.ready = Promise.all([document.fonts.ready, ...[...document.images].map((i) => i.decode().catch(() => {}))]).then(() => document.fonts.load("240px 'Great Vibes'")).then(() => document.fonts.load("500 30px 'Cormorant Garamond'"));
+window.renderFrame(0);
+</script>
+</body>
+</html>

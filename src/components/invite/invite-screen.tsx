@@ -5,36 +5,33 @@ import { InviteCard } from "@/components/invite/invite-card";
 import { RsvpClosed } from "@/components/invite/rsvp-closed";
 import { RsvpForm } from "@/components/invite/rsvp-form";
 import { RsvpSuccess } from "@/components/invite/rsvp-success";
-import { event } from "@/lib/event";
-import { firstName, formatPhone } from "@/lib/format";
+import type { EventSettings } from "@/lib/event";
+import { firstName } from "@/lib/format";
 import type { PublicGuest } from "@/lib/guest";
-import { whatsappUrl } from "@/lib/whatsapp";
 
 type InviteScreenProps = {
-  guest: PublicGuest | null;
+  guest: PublicGuest;
   closed: boolean;
+  settings: EventSettings;
 };
 
-export function InviteScreen({ guest: initialGuest, closed }: InviteScreenProps) {
+export function InviteScreen({ guest: initialGuest, closed, settings }: InviteScreenProps) {
   const [guest, setGuest] = useState(initialGuest);
-  const [name, setName] = useState(initialGuest?.name ?? "");
-  const [editing, setEditing] = useState(initialGuest?.status === "pending" || !initialGuest);
+  const [editing, setEditing] = useState(initialGuest.status === "pending");
 
-  const first = firstName(name);
-  const greeting = first ? `Oi, ${first} — você está convidado(a)` : "Você está convidado(a)";
-  const responded = guest && guest.status !== "pending";
+  const greeting = `Oi, ${firstName(guest.name)} — você está convidado(a)`;
+  const responded = guest.status !== "pending";
 
   let panel;
   if (responded && (!editing || closed)) {
-    panel = <RsvpSuccess guest={guest} canEdit={!closed} onEdit={() => setEditing(true)} />;
+    panel = <RsvpSuccess guest={guest} canEdit={!closed} onEdit={() => setEditing(true)} settings={settings} />;
   } else if (closed) {
-    panel = <RsvpClosed />;
+    panel = <RsvpClosed settings={settings} />;
   } else {
     panel = (
       <RsvpForm
-        code={guest?.code}
-        name={name}
-        onNameChange={setName}
+        code={guest.code}
+        name={guest.name}
         initial={guest}
         onSaved={(saved) => {
           setGuest(saved);
@@ -48,17 +45,9 @@ export function InviteScreen({ guest: initialGuest, closed }: InviteScreenProps)
     <main className="flex flex-1 flex-col items-center gap-7 px-4 pt-8 pb-16">
       <div className="flex w-full max-w-[560px] flex-col min-[960px]:max-w-[1080px]">
         <div className="flex flex-col gap-4 min-[960px]:grid min-[960px]:grid-cols-[repeat(auto-fit,minmax(min(100%,420px),1fr))] min-[960px]:items-start min-[960px]:gap-6">
-          <InviteCard greeting={greeting} />
+          <InviteCard greeting={greeting} settings={settings} />
           {panel}
         </div>
-        <a
-          href={whatsappUrl(event.contact.phone, "")}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="pt-0.5 font-sans text-11 text-faint hover:text-muted"
-        >
-          dúvidas? chame a {event.contact.name} ({event.contact.relation}) no whatsapp · {formatPhone(event.contact.phone)}
-        </a>
       </div>
     </main>
   );
