@@ -9,6 +9,8 @@ import {
   formatLongDate,
   formatNumericDayMonth,
   formatShortDate,
+  formatWeekdayDate,
+  inviteDescription,
   isRsvpClosed,
   mapsUrl,
   ogDescription,
@@ -43,10 +45,14 @@ describe("event settings", () => {
   });
 
   it("uses the edited details in the messages", () => {
-    const settings = { startsAt: "2026-12-05T15:30:00-03:00", rsvpDeadline: "2026-11-30T23:59:59-03:00", venue: "Salão Azul, Rua B 20" };
+    const settings = { startsAt: "2026-12-05T15:30:00-03:00", rsvpDeadline: "2026-11-30T23:59:59-03:00", venue: "Salão Azul, Rua B 20", spot: "Mesa 3" };
     expect(ogDescription(settings)).toBe("Sáb, 05 dez · 15h30 · confirme sua presença");
     expect(defaultInviteMessage(settings)).toContain("no dia 05/12, às 15h30, em Salão Azul, Rua B 20");
     expect(defaultInviteMessage(settings)).toContain("até 30/11");
+    expect(formatWeekdayDate(settings.startsAt)).toBe("Sábado, 05 dez");
+    expect(inviteDescription(settings)).toBe(
+      "Vamos celebrar o primeiro aninho da Manu com um almoço em Salão Azul, Rua B 20 dia 05/12 (sábado) às 15h30. Gostaríamos muito da presença das pessoas que mais amamos com a gente.",
+    );
   });
 });
 

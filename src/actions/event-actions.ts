@@ -13,13 +13,14 @@ export async function updateEventSettings(input: EventSettingsFields): Promise<U
   const parsed = eventSettingsSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Dados inválidos." };
 
-  const { startsAt, rsvpDeadline, venue } = parsed.data;
+  const { startsAt, rsvpDeadline, venue, spot } = parsed.data;
   const supabase = await createSessionClient();
   const { error } = await supabase.from("event_settings").upsert({
     id: 1,
     starts_at: startsAt,
     rsvp_deadline: rsvpDeadline,
     venue,
+    spot,
     updated_at: new Date().toISOString(),
   });
   if (error) return { ok: false, error: "Não foi possível salvar os dados do evento." };

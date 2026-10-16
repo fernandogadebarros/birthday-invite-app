@@ -14,7 +14,8 @@
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
     "db:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts && prettier --write src/lib/supabase/database.types.ts",
-    "motion:render": "node scripts/render-motion.mjs"
+    "motion:render": "node scripts/render-motion.mjs",
+    "og:render": "node scripts/render-og.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

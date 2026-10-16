@@ -130,7 +130,7 @@ test("admin can preview an invite without sending it", async ({ page, context })
   const dialog = page.getByRole("dialog", { name: "Prévia do convite de Marina" });
   await expect(dialog.getByText("/invite/marina-k7q2")).toBeVisible();
   await expect(dialog.getByRole("button", { name: /Abrir no WhatsApp/ })).toHaveCount(0);
-  await dialog.getByRole("button", { name: "Fechar" }).click();
+  await dialog.getByRole("button", { name: "Fechar" }).last().click();
   await expect(dialog).toBeHidden();
   expect(opened).toBe(false);
 });

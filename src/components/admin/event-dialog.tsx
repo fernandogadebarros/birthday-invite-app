@@ -57,6 +57,7 @@ function EventForm({
     fields.time &&
     fields.deadlineDate &&
     fields.venue.trim() &&
+    fields.spot.trim() &&
     !pending;
 
   return (
@@ -100,6 +101,13 @@ function EventForm({
           max={fields.date || undefined}
           value={fields.deadlineDate}
           onChange={set("deadlineDate")}
+        />
+        <Input
+          label="Onde"
+          placeholder="Ex.: Quiosque da amizade"
+          required
+          value={fields.spot}
+          onChange={set("spot")}
         />
         <div className="flex flex-col gap-2">
           <Input

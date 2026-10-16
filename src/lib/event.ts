@@ -8,12 +8,14 @@ export type EventSettings = {
   rsvpDeadline: string;
   /** Free text: place name and/or address; also drives the map link */
   venue: string;
+  spot: string;
 };
 
 export const defaultEventSettings: EventSettings = {
   startsAt: "2026-11-07T12:00:00-03:00",
   rsvpDeadline: "2026-10-31T23:59:59-03:00",
   venue: "Clube do Jaraguá",
+  spot: "Quiosque da amizade",
 };
 
 export const event = {
@@ -34,9 +36,8 @@ export const event = {
   maxCompanions: 5,
   copy: {
     brand: "Festa da Manu",
-    title: "Venha comemorar comigo!",
-    description:
-      "Vamos comemorar o primeiro ano da Manu com um almoço no clube, bolo, brincadeiras e as pessoas que ela mais ama. Confirme até o prazo pra gente acertar o buffet e as lembrancinhas.",
+    title: "Venha comemorar com a gente!",
+    confirmRequest: "Por favor, confirme sua presença para nos ajudar com a organização.",
     missYou: "a Manu vai sentir sua falta",
   },
 } as const;
@@ -89,6 +90,12 @@ export function formatHour(iso: string): string {
 export function formatShortDate(iso: string): string {
   const p = dateParts(iso);
   return `${capitalize(WEEKDAYS_SHORT[p.weekday])}, ${pad(p.day)} ${MONTHS_SHORT[p.month]}`;
+}
+
+/** "Sábado, 07 nov" */
+export function formatWeekdayDate(iso: string): string {
+  const p = dateParts(iso);
+  return `${capitalize(WEEKDAYS[p.weekday])}, ${pad(p.day)} ${MONTHS_SHORT[p.month]}`;
 }
 
 /** "31 out" */
@@ -152,6 +159,17 @@ export function defaultInviteMessage(settings: EventSettings): string {
     `Oi, {nome}! A ${nickname} vai fazer ${age} ${ageLabel(age)} no dia ${formatNumericDayMonth(settings.startsAt)}, ` +
     `às ${formatHour(settings.startsAt)}, em ${settings.venue}, e a gente quer muito você lá. ` +
     `Confirma sua presença até ${formatNumericDayMonth(settings.rsvpDeadline)} por aqui:`
+  );
+}
+
+/** Invite card paragraph with the party details from the saved settings. */
+export function inviteDescription(settings: EventSettings): string {
+  const { nickname, age } = event.celebrant;
+  const weekday = WEEKDAYS[dateParts(settings.startsAt).weekday];
+  return (
+    `Vamos celebrar o primeiro ${ageLabel(age)} da ${nickname} com um almoço em ${settings.venue} ` +
+    `dia ${formatNumericDayMonth(settings.startsAt)} (${weekday}) às ${formatHour(settings.startsAt)}. ` +
+    `Gostaríamos muito da presença das pessoas que mais amamos com a gente.`
   );
 }
 

@@ -19,7 +19,7 @@ export function InviteScreen({ guest: initialGuest, closed, settings }: InviteSc
   const [guest, setGuest] = useState(initialGuest);
   const [editing, setEditing] = useState(initialGuest.status === "pending");
 
-  const greeting = `Oi, ${firstName(guest.name)} — você está convidado(a)`;
+  const greeting = `Oi, ${firstName(guest.name)} - você está convidado(a)`;
   const responded = guest.status !== "pending";
 
   let panel;

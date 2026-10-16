@@ -51,6 +51,7 @@ export type Database = {
         Row: {
           id: number;
           rsvp_deadline: string;
+          spot: string;
           starts_at: string;
           updated_at: string;
           venue: string;
@@ -59,6 +60,7 @@ export type Database = {
         Insert: {
           id?: number;
           rsvp_deadline: string;
+          spot?: string;
           starts_at: string;
           updated_at?: string;
           venue: string;
@@ -66,6 +68,7 @@ export type Database = {
         Update: {
           id?: number;
           rsvp_deadline?: string;
+          spot?: string;
           starts_at?: string;
           updated_at?: string;
           venue?: string;

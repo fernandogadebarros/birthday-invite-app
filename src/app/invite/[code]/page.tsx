@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
   await connection();
   const description = ogDescription(await getEventSettings());
   // Setting openGraph here replaces the one inherited from the layout, so the card image is repeated.
-  const images = [{ url: "/opengraph-image", width: 1200, height: 630, type: "image/png" }];
+  const images = [{ url: "/images/og-card.jpg", width: 1200, height: 630, type: "image/jpeg" }];
   return {
     description,
     openGraph: { title: ogTitle(), description, images },
