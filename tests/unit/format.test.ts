@@ -22,6 +22,11 @@ describe("format", () => {
     expect(parseNames("Michael, Pedro pereira")).toEqual(["Michael", "Pedro pereira"]);
     expect(parseNames("Ana; Bia,\nCarla,, ")).toEqual(["Ana", "Bia", "Carla"]);
     expect(parseNames("   ,  ")).toEqual([]);
+    expect(parseNames("Ricardo Pereira - Junior Batista")).toEqual(["Ricardo Pereira", "Junior Batista"]);
+    expect(parseNames("Ricardo Pereira / Junior Batista | Ana & Bia")).toEqual(["Ricardo Pereira", "Junior Batista", "Ana", "Bia"]);
+    expect(parseNames("Ricardo e Junior ou Theo")).toEqual(["Ricardo", "Junior", "Theo"]);
+    expect(parseNames("- Ana\n• Bia.\n* Carla")).toEqual(["Ana", "Bia", "Carla"]);
+    expect(parseNames("Ana-Clara Pires, Eduardo")).toEqual(["Ana-Clara Pires", "Eduardo"]);
     expect(firstName("  Marina Costa ")).toBe("Marina");
     expect(pluralizePeople(1)).toBe("1 pessoa");
     expect(pluralizePeople(3)).toBe("3 pessoas");
