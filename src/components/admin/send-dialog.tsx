@@ -9,7 +9,7 @@ import { firstName, formatPhone } from "@/lib/format";
 import type { Guest } from "@/lib/guest";
 import { fillMessage, inviteText, inviteUrl, whatsappUrl } from "@/lib/whatsapp";
 
-export type SendTarget = { kind: "single" | "bulk"; guests: Guest[] };
+export type SendTarget = { kind: "single" | "bulk" | "preview"; guests: Guest[] };
 
 type SendDialogProps = {
   target: SendTarget | null;
@@ -28,6 +28,7 @@ export function SendDialog({ target, message, onMessageChange, onClose, baseUrl,
   const guests = target?.guests ?? [];
   const current = guests[Math.min(index, guests.length - 1)];
   const bulk = target?.kind === "bulk";
+  const preview = target?.kind === "preview";
   const link = current ? inviteUrl(current.code, baseUrl) : "";
   const host = new URL(baseUrl).host;
 
@@ -59,7 +60,8 @@ export function SendDialog({ target, message, onMessageChange, onClose, baseUrl,
     }
   }
 
-  const title = bulk ? "Lembrar pendentes" : `Enviar convite para ${current ? firstName(current.name) : ""}`;
+  const name = current ? firstName(current.name) : "";
+  const title = bulk ? "Lembrar pendentes" : preview ? `Prévia do convite de ${name}` : `Enviar convite para ${name}`;
   const subtitle = bulk
     ? `${guests.length} ${guests.length === 1 ? "convidado" : "convidados"} sem resposta · abre um chat por vez`
     : current?.phone
@@ -82,9 +84,25 @@ export function SendDialog({ target, message, onMessageChange, onClose, baseUrl,
           <Button variant="ghost" onClick={copyLink}>
             {copied ? "Copiado ✓" : "Copiar link"}
           </Button>
-          <Button variant="primary" onClick={send}>
-            {cta}
-          </Button>
+          {preview ? (
+            <>
+              <a
+                href={link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex h-10 items-center rounded-full border border-line px-[18px] font-sans text-caption font-medium text-ink hover:bg-hover"
+              >
+                Abrir página ↗
+              </a>
+              <Button variant="primary" onClick={close}>
+                Fechar
+              </Button>
+            </>
+          ) : (
+            <Button variant="primary" onClick={send}>
+              {cta}
+            </Button>
+          )}
         </>
       }
     >

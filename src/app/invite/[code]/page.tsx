@@ -13,7 +13,13 @@ export const instant = false;
 export async function generateMetadata(): Promise<Metadata> {
   await connection();
   const description = ogDescription(await getEventSettings());
-  return { description, openGraph: { title: ogTitle(), description } };
+  // Setting openGraph here replaces the one inherited from the layout, so the card image is repeated.
+  const images = [{ url: "/opengraph-image", width: 1200, height: 630, type: "image/png" }];
+  return {
+    description,
+    openGraph: { title: ogTitle(), description, images },
+    twitter: { card: "summary_large_image", title: ogTitle(), description, images },
+  };
 }
 
 export default async function InvitePage({ params }: PageProps<"/invite/[code]">) {
