@@ -85,6 +85,24 @@ See [`.env.example`](.env.example).
      `insert into public.admins (email) values ('admin@example.com');`
 2. **Vercel**: import the repository and set the variables above. `vercel.json` schedules the keep-alive cron once a day.
 
+## Database backup
+
+A GitHub Actions workflow (`.github/workflows/backup.yml`) dumps the `public` schema every day at 07:00 UTC and stores it as an **encrypted** artifact for 30 days. You can also run it from the **Actions** tab (**Run workflow**). It needs two repository secrets:
+
+| Secret | Value |
+|---|---|
+| `SUPABASE_DB_URL` | Session pooler connection string (Supabase → Connect → Session pooler), with the database password filled in |
+| `BACKUP_PASSPHRASE` | A long random passphrase used to encrypt the dump |
+
+To restore, download the artifact from a workflow run, then:
+
+```bash
+gpg --decrypt backup-YYYY-MM-DD.sql.gpg > backup.sql
+psql "$TARGET_DB_URL" -f backup.sql
+```
+
+The dump does not include `auth.users`: admin accounts are recreated in Supabase Auth and listed in `public.admins`. GitHub disables scheduled workflows after 60 days without repository activity.
+
 ## Security notes
 
 - Guests never access the database directly. Server Actions run with the secret key and only update the RSVP fields of the invite identified by its `code`.
