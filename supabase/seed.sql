@@ -1,13 +1,13 @@
 -- Local development data: the 7 guests from the design mockup + one admin.
 
 insert into public.guests (code, name, phone, status, companions_count, companions_names, sent_at, responded_at, created_at) values
-  ('marina-k7q2', 'Marina Costa', '11987650001', 'pending', 0, '{}', now() - interval '2 days', null, now() - interval '6 days'),
-  ('rafael-m3vd', 'Rafael Moreira', '11987650002', 'yes', 2, '{"Luiza Moreira","Theo Moreira"}', now() - interval '4 days', now() - interval '3 hours', now() - interval '6 days'),
-  ('carla-p8xa', 'Carla Nunes', '11987650003', 'yes', 0, '{}', now() - interval '4 days', now() - interval '1 day', now() - interval '6 days'),
-  ('bruno-t2hn', 'Bruno Alves', '21987650004', 'no', 0, '{}', now() - interval '4 days', now() - interval '2 days', now() - interval '6 days'),
-  ('julia-w5ke', 'Júlia e família Pires', '11987650005', 'yes', 3, '{"Pedro Pires","Ana Clara Pires","Dona Rosa"}', now() - interval '6 days', now() - interval '5 days', now() - interval '6 days'),
-  ('diego-r9fc', 'Diego Santana', '11987650006', 'pending', 0, '{}', null, null, now() - interval '1 day'),
-  ('fernanda-b4zu', 'Fernanda Lima', '31987650007', 'pending', 0, '{}', null, null, now() - interval '1 day');
+  ('marina-k7q2', 'Marina Costa', '5511987650001', 'pending', 0, '{}', now() - interval '2 days', null, now() - interval '6 days'),
+  ('rafael-m3vd', 'Rafael Moreira', '5511987650002', 'yes', 2, '{"Luiza Moreira","Theo Moreira"}', now() - interval '4 days', now() - interval '3 hours', now() - interval '6 days'),
+  ('carla-p8xa', 'Carla Nunes', '5511987650003', 'yes', 0, '{}', now() - interval '4 days', now() - interval '1 day', now() - interval '6 days'),
+  ('bruno-t2hn', 'Bruno Alves', '5521987650004', 'no', 0, '{}', now() - interval '4 days', now() - interval '2 days', now() - interval '6 days'),
+  ('julia-w5ke', 'Júlia e família Pires', '5511987650005', 'yes', 3, '{"Pedro Pires","Ana Clara Pires","Dona Rosa"}', now() - interval '6 days', now() - interval '5 days', now() - interval '6 days'),
+  ('diego-r9fc', 'Diego Santana', '5511987650006', 'pending', 0, '{}', null, null, now() - interval '1 day'),
+  ('fernanda-b4zu', 'Fernanda Lima', '5531987650007', 'pending', 0, '{}', null, null, now() - interval '1 day');
 
 -- Local admin: admin@festa.local / festa123
 insert into public.admins (email) values ('admin@festa.local');
