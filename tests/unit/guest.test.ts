@@ -19,7 +19,7 @@ describe("whatsapp", () => {
     const text = inviteText("Oi, {nome}! Confirma:", "Marina Costa", url);
     expect(text).toBe("Oi, Marina! Confirma: https://manu1.rsvp.app/invite/marina-k7q2");
     expect(fillMessage("{nome} e {nome}", "Ana")).toBe("Ana e Ana");
-    expect(whatsappUrl("11987650001", "Oi & tchau")).toBe("https://wa.me/5511987650001?text=Oi%20%26%20tchau");
+    expect(whatsappUrl("5511987650001", "Oi & tchau")).toBe("https://wa.me/5511987650001?text=Oi%20%26%20tchau");
   });
 });
 
@@ -66,7 +66,7 @@ describe("rsvp schema", () => {
   });
 
   it("normalizes new guest phones", () => {
-    expect(newGuestSchema.parse({ name: "Ana", phone: "(11) 98765-0001" }).phone).toBe("11987650001");
+    expect(newGuestSchema.parse({ name: "Ana", phone: "(55) 11 98765-0001" }).phone).toBe("5511987650001");
     expect(newGuestSchema.safeParse({ name: "Ana", phone: "1234" }).success).toBe(false);
   });
 });

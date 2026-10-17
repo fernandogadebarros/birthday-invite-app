@@ -12,7 +12,7 @@ export function NewGuestRow({ onAdded }: { onAdded: (guest: Guest) => void }) {
   const [phone, setPhone] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-  const cantAdd = !name.trim() || onlyDigits(phone).length < 10 || pending;
+  const cantAdd = !name.trim() || onlyDigits(phone).length < 12 || pending;
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -35,7 +35,7 @@ export function NewGuestRow({ onAdded }: { onAdded: (guest: Guest) => void }) {
       <div className="min-w-[160px] flex-[1.4]">
         <Input
           label="WhatsApp"
-          placeholder="(11) 9 0000-0000"
+          placeholder="(55) 11 9 0000-0000"
           inputMode="tel"
           autoComplete="off"
           value={phone}

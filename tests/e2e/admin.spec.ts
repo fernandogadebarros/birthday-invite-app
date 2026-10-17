@@ -45,7 +45,7 @@ test("admin sees the guest list, filters and sends invites", async ({ page, cont
   // New guest -> send dialog -> WhatsApp link with the personal URL.
   await page.getByLabel("Novo convidado").fill("Teste Admin");
   await page.getByLabel("WhatsApp").fill("11999990000");
-  await expect(page.getByLabel("WhatsApp")).toHaveValue("(11) 99999-0000");
+  await expect(page.getByLabel("WhatsApp")).toHaveValue("(55) 11 99999-0000");
   await page.getByRole("button", { name: "Adicionar e enviar →" }).click();
 
   const dialog = page.getByRole("dialog", { name: "Enviar convite para Teste" });
@@ -95,7 +95,7 @@ test("admin list updates by itself when a guest confirms", async ({ page, browse
 test("admin can delete a guest after confirming", async ({ page }) => {
   await login(page);
   await page.getByLabel("Novo convidado").fill("Para Excluir");
-  await page.getByLabel("WhatsApp").fill("11988887777");
+  await page.getByLabel("WhatsApp").fill("5511988887777");
   await page.getByRole("button", { name: "Adicionar e enviar →" }).click();
   const sendDialog = page.getByRole("dialog", { name: "Enviar convite para Para" });
   await expect(sendDialog).toBeVisible();

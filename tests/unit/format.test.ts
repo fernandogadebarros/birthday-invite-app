@@ -3,10 +3,12 @@ import { firstName, formatPhone, formatRelative, maskPhoneInput, parseNames, plu
 
 describe("format", () => {
   it("formats phones like the design", () => {
-    expect(formatPhone("11987650001")).toBe("(11) 98765-0001");
-    expect(formatPhone("1132650001")).toBe("(11) 3265-0001");
-    expect(maskPhoneInput("11987650001")).toBe("(11) 98765-0001");
-    expect(maskPhoneInput("119")).toBe("(11) 9");
+    expect(formatPhone("5511987650001")).toBe("(55) 11 98765-0001");
+    expect(formatPhone("551132650001")).toBe("(55) 11 3265-0001");
+    expect(maskPhoneInput("11987650001")).toBe("(55) 11 98765-0001");
+    expect(maskPhoneInput("5511987650001")).toBe("(55) 11 98765-0001");
+    expect(maskPhoneInput("119")).toBe("(55) 11 9");
+    expect(maskPhoneInput("")).toBe("(55) ");
   });
 
   it("formats relative times", () => {

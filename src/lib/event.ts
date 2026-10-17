@@ -28,8 +28,8 @@ export const event = {
   contact: {
     name: "Veronica",
     relation: "mãe da Manu",
-    // Only digits, with DDD, without +55.
-    phone: "11985798777",
+    // Only digits, with country code and DDD.
+    phone: "5511985798777",
   },
   // Placeholder domain shown in the WhatsApp preview; the real link uses NEXT_PUBLIC_SITE_URL.
   domain: "manu1.rsvp.app",

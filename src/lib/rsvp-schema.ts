@@ -24,5 +24,5 @@ export const newGuestSchema = z.object({
   phone: z
     .string()
     .transform((v) => v.replace(/\D/g, ""))
-    .pipe(z.string().regex(/^\d{10,11}$/, "WhatsApp com DDD")),
+    .pipe(z.string().regex(/^55\d{10,11}$/, "WhatsApp com DDD")),
 });

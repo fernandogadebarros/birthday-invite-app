@@ -2,19 +2,22 @@ export function onlyDigits(value: string): string {
   return value.replace(/\D/g, "");
 }
 
-/** "11987650001" -> "(11) 98765-0001" */
+/** "5511987650001" -> "(55) 11 98765-0001" (stored with country code, 12-13 digits) */
 export function formatPhone(phone: string): string {
   const d = onlyDigits(phone);
-  if (d.length < 10) return phone;
-  return `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}`;
+  if (d.length < 12) return phone;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 4)} ${d.slice(4, d.length - 4)}-${d.slice(-4)}`;
 }
 
-/** Progressive mask while typing: "(11) 9 8765-0001" style without forcing the 9. */
+/** Progressive mask while typing: "(55) 11 98765-0001". The country code is always 55. */
 export function maskPhoneInput(value: string): string {
-  const d = onlyDigits(value).slice(0, 11);
-  if (d.length <= 2) return d.length ? `(${d}` : "";
-  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  return `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}`;
+  let d = onlyDigits(value);
+  if (d.startsWith("55")) d = d.slice(2);
+  d = `55${d.slice(0, 11)}`;
+  if (d.length <= 2) return "(55) ";
+  if (d.length <= 4) return `(55) ${d.slice(2)}`;
+  if (d.length <= 8) return `(55) ${d.slice(2, 4)} ${d.slice(4)}`;
+  return `(55) ${d.slice(2, 4)} ${d.slice(4, d.length - 4)}-${d.slice(-4)}`;
 }
 
 export function firstName(name: string): string {
