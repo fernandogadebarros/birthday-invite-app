@@ -8,8 +8,8 @@ describe("event settings fields", () => {
       date: "2026-11-07",
       time: "12:00",
       deadlineDate: "2026-10-31",
-      venue: "Clube do Jaraguá",
-      spot: "Quiosque da amizade",
+      venue: "Jaraguá Clube Campestre",
+      spot: "Quiosque da Amizade",
     });
     // Same instant stored as UTC by Postgres.
     expect(toFields({ ...defaultEventSettings, startsAt: "2026-11-07T15:00:00+00:00" }).time).toBe("12:00");

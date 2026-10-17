@@ -10,7 +10,7 @@ import {
   formatNumericDayMonth,
   formatShortDate,
   formatWeekdayDate,
-  inviteDescription,
+  inviteWhen,
   isRsvpClosed,
   mapsUrl,
   ogDescription,
@@ -32,7 +32,19 @@ describe("event formatting", () => {
 
   it("builds the default WhatsApp message from the config", () => {
     expect(defaultInviteMessage(defaultEventSettings)).toBe(
-      "Oi, {nome}! A Manu vai fazer 1 aninho no dia 07/11, às 12h, em Clube do Jaraguá, e a gente quer muito você lá. Confirma sua presença até 31/10 por aqui:",
+      [
+        "Olá, {nome}!",
+        "",
+        "A Manu vai fazer 1 aninho e queremos te convidar para comemorar esse dia especial com a gente! 💕🐭",
+        "",
+        "🗓️ Dia: 07/nov (sábado)",
+        "🕐 Hora: 12h",
+        "📍 Onde: Jaraguá Clube Campestre - Quiosque da Amizade",
+        "",
+        "Endereço: Av. Dr. Felipe Pinel, 2008 - Pirituba, São Paulo - SP, 02939-000",
+        "",
+        "Confirme sua presença:",
+      ].join("\n"),
     );
   });
 });
@@ -47,12 +59,9 @@ describe("event settings", () => {
   it("uses the edited details in the messages", () => {
     const settings = { startsAt: "2026-12-05T15:30:00-03:00", rsvpDeadline: "2026-11-30T23:59:59-03:00", venue: "Salão Azul, Rua B 20", spot: "Mesa 3" };
     expect(ogDescription(settings)).toBe("Sáb, 05 dez · 15h30 · confirme sua presença");
-    expect(defaultInviteMessage(settings)).toContain("no dia 05/12, às 15h30, em Salão Azul, Rua B 20");
-    expect(defaultInviteMessage(settings)).toContain("até 30/11");
+    expect(defaultInviteMessage(settings)).toContain("🗓️ Dia: 05/dez (sábado)\n🕐 Hora: 15h30\n📍 Onde: Salão Azul, Rua B 20 - Mesa 3");
     expect(formatWeekdayDate(settings.startsAt)).toBe("Sábado, 05 dez");
-    expect(inviteDescription(settings)).toBe(
-      "Vamos celebrar o primeiro aninho da Manu com um almoço em Salão Azul, Rua B 20 dia 05/12 (sábado) às 15h30. Gostaríamos muito da presença das pessoas que mais amamos com a gente.",
-    );
+    expect(inviteWhen(settings)).toBe("dia 05/12 (sábado) às 15h30");
   });
 });
 

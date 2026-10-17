@@ -14,8 +14,8 @@ export type EventSettings = {
 export const defaultEventSettings: EventSettings = {
   startsAt: "2026-11-07T12:00:00-03:00",
   rsvpDeadline: "2026-10-31T23:59:59-03:00",
-  venue: "Clube do Jaraguá",
-  spot: "Quiosque da amizade",
+  venue: "Jaraguá Clube Campestre",
+  spot: "Quiosque da Amizade",
 };
 
 export const event = {
@@ -152,25 +152,33 @@ export function deadlineCountdownLabel(deadline: string, now: Date = new Date())
   return days === 1 ? "falta 1 dia" : `faltam ${days} dias`;
 }
 
-/** Default WhatsApp message; `{nome}` becomes each guest's first name. */
+/** Street address shown in the WhatsApp message. */
+const VENUE_ADDRESS = "Av. Dr. Felipe Pinel, 2008 - Pirituba, São Paulo - SP, 02939-000";
+
+/** Default WhatsApp message; `{nome}` becomes each guest's first name and the invite link is appended after it. */
 export function defaultInviteMessage(settings: EventSettings): string {
   const { nickname, age } = event.celebrant;
-  return (
-    `Oi, {nome}! A ${nickname} vai fazer ${age} ${ageLabel(age)} no dia ${formatNumericDayMonth(settings.startsAt)}, ` +
-    `às ${formatHour(settings.startsAt)}, em ${settings.venue}, e a gente quer muito você lá. ` +
-    `Confirma sua presença até ${formatNumericDayMonth(settings.rsvpDeadline)} por aqui:`
-  );
+  const weekday = WEEKDAYS[dateParts(settings.startsAt).weekday];
+  const where = settings.spot ? `${settings.venue} - ${settings.spot}` : settings.venue;
+  return [
+    "Olá, {nome}!",
+    "",
+    `A ${nickname} vai fazer ${age} ${ageLabel(age)} e queremos te convidar para comemorar esse dia especial com a gente! 💕🐭`,
+    "",
+    `🗓️ Dia: ${formatDayMonth(settings.startsAt).replace(" ", "/")} (${weekday})`,
+    `🕐 Hora: ${formatHour(settings.startsAt)}`,
+    `📍 Onde: ${where}`,
+    "",
+    `Endereço: ${VENUE_ADDRESS}`,
+    "",
+    "Confirme sua presença:",
+  ].join("\n");
 }
 
-/** Invite card paragraph with the party details from the saved settings. */
-export function inviteDescription(settings: EventSettings): string {
-  const { nickname, age } = event.celebrant;
+/** Venue and moment highlighted in the invite card paragraph, e.g. "07/11 (sábado) às 12h". */
+export function inviteWhen(settings: EventSettings): string {
   const weekday = WEEKDAYS[dateParts(settings.startsAt).weekday];
-  return (
-    `Vamos celebrar o primeiro ${ageLabel(age)} da ${nickname} com um almoço em ${settings.venue} ` +
-    `dia ${formatNumericDayMonth(settings.startsAt)} (${weekday}) às ${formatHour(settings.startsAt)}. ` +
-    `Gostaríamos muito da presença das pessoas que mais amamos com a gente.`
-  );
+  return `dia ${formatNumericDayMonth(settings.startsAt)} (${weekday}) às ${formatHour(settings.startsAt)}`;
 }
 
 export function ogTitle(): string {

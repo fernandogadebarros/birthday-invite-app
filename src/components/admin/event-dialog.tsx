@@ -104,7 +104,7 @@ function EventForm({
         />
         <Input
           label="Onde"
-          placeholder="Ex.: Quiosque da amizade"
+          placeholder="Ex.: Quiosque da Amizade"
           required
           value={fields.spot}
           onChange={set("spot")}
