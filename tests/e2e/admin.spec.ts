@@ -56,7 +56,7 @@ test("admin sees the guest list, filters and sends invites", async ({ page, cont
   const popupPromise = page.waitForEvent("popup");
   await dialog.getByRole("button", { name: "Abrir no WhatsApp →" }).click();
   const popup = await popupPromise;
-  expect(popup.url()).toMatch(/^https:\/\/wa\.me\/5511999990000\?text=Oi%2C%20Teste!.*%2Finvite%2Fteste-/);
+  expect(popup.url()).toMatch(/^https:\/\/wa\.me\/5511999990000\?text=Ol%C3%A1%2C%20Teste!.*%2Finvite%2Fteste-/);
   await popup.close();
 
   const row = page.locator("div.grid", { hasText: "Teste Admin" });
