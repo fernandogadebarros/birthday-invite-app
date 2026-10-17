@@ -152,8 +152,8 @@ export function deadlineCountdownLabel(deadline: string, now: Date = new Date())
   return days === 1 ? "falta 1 dia" : `faltam ${days} dias`;
 }
 
-/** Street address shown in the WhatsApp message. */
-const VENUE_ADDRESS = "Av. Dr. Felipe Pinel, 2008 - Pirituba, São Paulo - SP, 02939-000";
+/** Street address shown in the WhatsApp message and in the invite card paragraph. */
+export const VENUE_ADDRESS = "Av. Dr. Felipe Pinel, 2008 - Pirituba, São Paulo - SP, 02939-000";
 
 /** Default WhatsApp message; `{nome}` becomes each guest's first name and the invite link is appended after it. */
 export function defaultInviteMessage(settings: EventSettings): string {

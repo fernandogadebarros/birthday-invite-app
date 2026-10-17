@@ -1,4 +1,4 @@
-import { ageLabel, event, formatHour, formatWeekdayDate, inviteWhen, mapsUrl, type EventSettings } from "@/lib/event";
+import { ageLabel, event, formatHour, formatWeekdayDate, inviteWhen, mapsUrl, VENUE_ADDRESS, type EventSettings } from "@/lib/event";
 import { InviteVideo } from "@/components/invite/invite-video";
 
 function InfoCell({ label, value, highlight, className }: { label: string; value: string; highlight?: boolean; className?: string }) {
@@ -19,7 +19,7 @@ export function InviteCard({ greeting, settings }: { greeting: string; settings:
         <h1 className="m-0 font-sans text-display leading-[1.1] font-semibold tracking-tight text-balance text-ink">{event.copy.title}</h1>
         <p className="m-0 font-sans text-body leading-[1.6] text-pretty text-body">Vamos celebrar o primeiro {ageLabel()} da <strong className="text-accent">{event.celebrant.nickname}</strong> com um almoço no{" "}
           <strong>
-            {settings.venue}, {inviteWhen(settings)}
+            {settings.venue} - {VENUE_ADDRESS}, {inviteWhen(settings)}
           </strong>
           . Gostaríamos muito da presença das pessoas que mais amamos com a gente.
         </p>
