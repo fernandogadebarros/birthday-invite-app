@@ -26,7 +26,7 @@ test("admin edits the event and the invite follows, with an automatic map link",
   await dialog.getByLabel("Data").fill("2026-12-05");
   await dialog.getByLabel("Hora").fill("15:30");
   await dialog.getByLabel("Local").fill("Salão Azul, Rua das Flores 10");
-  await expect(dialog.getByLabel("Onde")).toHaveValue("Quiosque da amizade");
+  await expect(dialog.getByLabel("Onde")).toHaveValue("Quiosque da Amizade");
   await dialog.getByLabel("Onde").fill("Mesa 3");
   await dialog.getByRole("button", { name: "Salvar" }).click();
   await expect(dialog.getByText("O prazo para confirmar deve ser até o dia da festa.")).toBeVisible();

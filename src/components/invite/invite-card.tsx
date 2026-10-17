@@ -1,4 +1,4 @@
-import { event, formatHour, formatWeekdayDate, inviteDescription, mapsUrl, type EventSettings } from "@/lib/event";
+import { ageLabel, event, formatHour, formatWeekdayDate, inviteWhen, mapsUrl, type EventSettings } from "@/lib/event";
 import { InviteVideo } from "@/components/invite/invite-video";
 
 function InfoCell({ label, value, highlight, className }: { label: string; value: string; highlight?: boolean; className?: string }) {
@@ -17,7 +17,12 @@ export function InviteCard({ greeting, settings }: { greeting: string; settings:
       <div className="flex flex-col gap-3.5 px-6 pt-6 pb-[26px]">
         <span className="font-sans text-caption font-semibold tracking-greeting text-accent uppercase">{greeting}</span>
         <h1 className="m-0 font-sans text-display leading-[1.1] font-semibold tracking-tight text-balance text-ink">{event.copy.title}</h1>
-        <p className="m-0 font-sans text-body leading-[1.6] text-pretty text-body">{inviteDescription(settings)}</p>
+        <p className="m-0 font-sans text-body leading-[1.6] text-pretty text-body">Vamos celebrar o primeiro {ageLabel()} da <strong className="text-accent">{event.celebrant.nickname}</strong> com um almoço no{" "}
+          <strong>
+            {settings.venue}, {inviteWhen(settings)}
+          </strong>
+          . Gostaríamos muito da presença das pessoas que mais amamos com a gente.
+        </p>
         <p className="m-0 font-sans text-body leading-[1.6] text-pretty text-body">{event.copy.confirmRequest}</p>
         <div className="mt-1.5 grid grid-cols-2 gap-px min-[460px]:grid-cols-3 overflow-hidden rounded-panel border border-line-subtle bg-line-subtle">
           <InfoCell label="Data" value={formatWeekdayDate(settings.startsAt)} />

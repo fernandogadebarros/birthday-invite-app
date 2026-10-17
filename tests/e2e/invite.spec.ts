@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("guest confirms with companions and can change the answer", async ({ page }) => {
   await page.goto("/invite/diego-r9fc");
-  await expect(page.getByText("Oi, Diego - você está convidado(a)")).toBeVisible();
+  await expect(page.getByText("Olá, Diego! Você está convidado(a)")).toBeVisible();
   await expect(page.getByLabel("Seu nome")).toHaveValue("Diego Santana");
 
   const submit = page.getByRole("button", { name: "Confirmar presença →" });

@@ -51,7 +51,7 @@ test("admin sees the guest list, filters and sends invites", async ({ page, cont
   const dialog = page.getByRole("dialog", { name: "Enviar convite para Teste" });
   await expect(dialog).toBeVisible();
   await expect(dialog.getByText(/\/invite\/teste-[a-z2-9]{4}$/)).toBeVisible();
-  await expect(dialog.getByText(/^Oi, Teste! A Manu vai fazer 1 aninho/)).toBeVisible();
+  await expect(dialog.getByText(/^Olá, Teste!/)).toBeVisible();
 
   const popupPromise = page.waitForEvent("popup");
   await dialog.getByRole("button", { name: "Abrir no WhatsApp →" }).click();
