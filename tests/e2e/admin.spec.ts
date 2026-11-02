@@ -118,6 +118,17 @@ test("admin can delete a guest after confirming", async ({ page }) => {
   await expect(page.getByText("Para Excluir")).toHaveCount(0);
 });
 
+test("admin can see every companion name of a guest", async ({ page }) => {
+  await login(page);
+
+  await page.getByRole("button", { name: "Ver todos os acompanhantes de Júlia e família Pires" }).click();
+  const dialog = page.getByRole("dialog", { name: "Acompanhantes" });
+  await expect(dialog.getByText("Júlia e família Pires")).toBeVisible();
+  await expect(dialog.getByRole("listitem")).toHaveText(["Pedro Pires", "Ana Clara Pires", "Dona Rosa"]);
+  await dialog.getByRole("button", { name: "Fechar" }).last().click();
+  await expect(dialog).toBeHidden();
+});
+
 test("admin can preview an invite without sending it", async ({ page, context }) => {
   let opened = false;
   await context.route("https://wa.me/**", (route) => {
