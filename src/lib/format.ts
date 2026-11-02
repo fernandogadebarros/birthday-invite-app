@@ -46,11 +46,19 @@ export function formatRelative(iso: string, now: Date = new Date()): string {
 // ("Ana Clara") and a dash inside a name ("Ana-Clara") are kept.
 const NAME_SEPARATORS = /[\n\r,;:|/\\&+*#•·]+|[ \t]{2,}|\s[-–—]+\s|\s+(?:e|ou)\s+/i;
 const EDGE_NON_LETTERS = /^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu;
+const LEADING_NON_LETTERS = /^[^\p{L}\p{N}]+/u;
+const TRAILING_NON_LETTERS_KEEPING_PAREN = /[^\p{L}\p{N})]+$/u;
+
+// Keeps the ")" that closes a "(" ("Leonardo (5 anos)"); a stray one is still dropped.
+function cleanName(name: string): string {
+  const kept = name.replace(LEADING_NON_LETTERS, "").replace(TRAILING_NON_LETTERS_KEEPING_PAREN, "").trim();
+  return kept.endsWith(")") && !kept.includes("(") ? kept.replace(EDGE_NON_LETTERS, "").trim() : kept;
+}
 
 /** Splits the companions textarea into clean names, whatever the separator. */
 export function parseNames(text: string): string[] {
   return text
     .split(NAME_SEPARATORS)
-    .map((n) => n.replace(EDGE_NON_LETTERS, "").trim())
+    .map(cleanName)
     .filter(Boolean);
 }
