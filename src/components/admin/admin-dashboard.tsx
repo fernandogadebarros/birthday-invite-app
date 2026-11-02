@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CompanionsDialog } from "@/components/admin/companions-dialog";
+import { EditGuestDialog } from "@/components/admin/edit-guest-dialog";
 import { DeleteDialog } from "@/components/admin/delete-dialog";
 import { EventDialog } from "@/components/admin/event-dialog";
 import { GuestTable } from "@/components/admin/guest-table";
@@ -48,6 +50,8 @@ export function AdminDashboard({ guests, nowIso, baseUrl, settings }: AdminDashb
   const [editingEvent, setEditingEvent] = useState(false);
   const [target, setTarget] = useState<SendTarget | null>(null);
   const [deleting, setDeleting] = useState<Guest | null>(null);
+  const [editing, setEditing] = useState<Guest | null>(null);
+  const [viewingCompanions, setViewingCompanions] = useState<Guest | null>(null);
   useGuestsRealtime();
 
   const now = useMemo(() => new Date(nowIso), [nowIso]);
@@ -103,12 +107,16 @@ export function AdminDashboard({ guests, nowIso, baseUrl, settings }: AdminDashb
             onSend={(guest) => setTarget({ kind: "single", guests: [guest] })}
             onPreview={(guest) => setTarget({ kind: "preview", guests: [guest] })}
             onDelete={setDeleting}
+            onShowCompanions={setViewingCompanions}
+            onEdit={setEditing}
           />
         </div>
       </div>
 
       <EventDialog open={editingEvent} settings={settings} onClose={() => setEditingEvent(false)} />
       <DeleteDialog guest={deleting} onClose={() => setDeleting(null)} />
+      <EditGuestDialog guest={editing} onClose={() => setEditing(null)} />
+      <CompanionsDialog guest={viewingCompanions} onClose={() => setViewingCompanions(null)} />
       <SendDialog
         target={target}
         message={message}

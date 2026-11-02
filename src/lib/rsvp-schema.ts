@@ -19,8 +19,10 @@ export const rsvpSchema = z
 export type RsvpInput = z.input<typeof rsvpSchema>;
 export type Rsvp = z.output<typeof rsvpSchema>;
 
+export const guestNameSchema = z.string().trim().min(1, "Informe o nome.").max(120);
+
 export const newGuestSchema = z.object({
-  name: z.string().trim().min(1).max(120),
+  name: guestNameSchema,
   phone: z
     .string()
     .transform((v) => v.replace(/\D/g, ""))

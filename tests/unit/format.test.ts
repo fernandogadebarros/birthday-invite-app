@@ -30,6 +30,8 @@ describe("format", () => {
     expect(parseNames("Ricardo e Junior ou Theo")).toEqual(["Ricardo", "Junior", "Theo"]);
     expect(parseNames("- Ana\n• Bia.\n* Carla")).toEqual(["Ana", "Bia", "Carla"]);
     expect(parseNames("Ana-Clara Pires, Eduardo")).toEqual(["Ana-Clara Pires", "Eduardo"]);
+    expect(parseNames("Leonardo (5 anos), Sara (01 ano)")).toEqual(["Leonardo (5 anos)", "Sara (01 ano)"]);
+    expect(parseNames("Ana), Bia (3 anos).")).toEqual(["Ana", "Bia (3 anos)"]);
     expect(firstName("  Marina Costa ")).toBe("Marina");
     expect(pluralizePeople(1)).toBe("1 pessoa");
     expect(pluralizePeople(3)).toBe("3 pessoas");

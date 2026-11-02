@@ -30,9 +30,11 @@ type GuestTableProps = {
   onSend: (guest: Guest) => void;
   onPreview: (guest: Guest) => void;
   onDelete: (guest: Guest) => void;
+  onShowCompanions: (guest: Guest) => void;
+  onEdit: (guest: Guest) => void;
 };
 
-export function GuestTable({ guests, now, onSend, onPreview, onDelete }: GuestTableProps) {
+export function GuestTable({ guests, now, onSend, onPreview, onDelete, onShowCompanions, onEdit }: GuestTableProps) {
   return (
     <div className="overflow-x-auto">
       <div className="min-w-[640px]">
@@ -48,7 +50,15 @@ export function GuestTable({ guests, now, onSend, onPreview, onDelete }: GuestTa
           return (
             <div key={guest.id} className={`${GRID} items-center border-b border-line-subtle px-4 py-3 hover:bg-hover`}>
               <div className="flex min-w-0 flex-col gap-[3px]">
-                <span className="truncate font-sans text-body font-medium text-ink">{guest.name}</span>
+                <button
+                  type="button"
+                  title="Editar nome"
+                  aria-label={`Editar nome de ${guest.name}`}
+                  onClick={() => onEdit(guest)}
+                  className="cursor-pointer truncate border-0 bg-transparent p-0 text-left font-sans text-body font-medium text-ink hover:underline"
+                >
+                  {guest.name}
+                </button>
                 <span className="font-sans text-micro text-muted">{guest.phone ? formatPhone(guest.phone) : "—"}</span>
               </div>
               <div className="flex flex-col items-start gap-1">
@@ -58,7 +68,15 @@ export function GuestTable({ guests, now, onSend, onPreview, onDelete }: GuestTa
               <div className="flex min-w-0 flex-col gap-[3px]">
                 <span className="font-sans text-small font-medium text-body">{companionsLabel(guest)}</span>
                 {guest.status === "yes" && guest.companions_names.length > 0 && (
-                  <span className="truncate font-sans text-micro text-muted">{guest.companions_names.join(", ")}</span>
+                  <button
+                    type="button"
+                    title="Ver todos os acompanhantes"
+                    aria-label={`Ver todos os acompanhantes de ${guest.name}`}
+                    onClick={() => onShowCompanions(guest)}
+                    className="cursor-pointer truncate border-0 bg-transparent p-0 text-left font-sans text-micro text-muted hover:text-body"
+                  >
+                    {guest.companions_names.join(", ")}
+                  </button>
                 )}
               </div>
               <div className="flex items-center justify-end gap-1.5">
