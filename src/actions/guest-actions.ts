@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import type { Guest } from "@/lib/guest";
 import { createGuestCode } from "@/lib/guest-code";
-import { newGuestSchema } from "@/lib/rsvp-schema";
+import { guestNameSchema, newGuestSchema } from "@/lib/rsvp-schema";
 import { createSessionClient, getAdminEmail } from "@/lib/supabase/session-client";
 
 export type AddGuestResult = { ok: true; guest: Guest } | { ok: false; error: string };
@@ -47,6 +47,21 @@ export async function deleteGuest(id: string): Promise<DeleteGuestResult> {
 
   const { error } = await supabase.from("guests").delete().eq("id", id);
   if (error) return { ok: false, error: "Não foi possível excluir o convidado." };
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+export type UpdateGuestNameResult = { ok: true } | { ok: false; error: string };
+
+// The code is never touched: the invite link already sent must keep working.
+export async function updateGuestName(id: string, name: string): Promise<UpdateGuestNameResult> {
+  const supabase = await requireAdmin();
+  if (!z.uuid().safeParse(id).success) return { ok: false, error: "Convidado inválido." };
+  const parsed = guestNameSchema.safeParse(name);
+  if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Nome inválido." };
+
+  const { error } = await supabase.from("guests").update({ name: parsed.data }).eq("id", id);
+  if (error) return { ok: false, error: "Não foi possível salvar o nome." };
   revalidatePath("/admin");
   return { ok: true };
 }

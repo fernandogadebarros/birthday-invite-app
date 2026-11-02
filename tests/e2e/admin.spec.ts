@@ -129,6 +129,23 @@ test("admin can see every companion name of a guest", async ({ page }) => {
   await expect(dialog).toBeHidden();
 });
 
+test("admin can rename a guest and the invite link stays the same", async ({ page }) => {
+  await login(page);
+
+  await page.getByRole("button", { name: "Editar nome de Marina Costa" }).click();
+  const dialog = page.getByRole("dialog", { name: "Editar convidado" });
+  await expect(dialog.getByLabel("Nome")).toHaveValue("Marina Costa");
+  await expect(dialog.getByRole("button", { name: "Salvar" })).toBeDisabled();
+
+  await dialog.getByLabel("Nome").fill("Marina Costa Lima");
+  await dialog.getByRole("button", { name: "Salvar" }).click();
+  await expect(dialog).toBeHidden();
+  await expect(page.getByRole("button", { name: "Editar nome de Marina Costa Lima" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Ver prévia do convite de Marina Costa Lima" }).click();
+  await expect(page.getByRole("dialog", { name: /Prévia do convite de Marina/ }).getByText("/invite/marina-k7q2")).toBeVisible();
+});
+
 test("admin can preview an invite without sending it", async ({ page, context }) => {
   let opened = false;
   await context.route("https://wa.me/**", (route) => {

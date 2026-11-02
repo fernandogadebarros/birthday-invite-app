@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { createGuestCode, slugFirstName } from "@/lib/guest-code";
 import { computeStats, guestActivityLabel } from "@/lib/guest-stats";
 import { fillMessage, inviteText, inviteUrl, whatsappUrl } from "@/lib/whatsapp";
-import { rsvpSchema, newGuestSchema } from "@/lib/rsvp-schema";
+import { guestNameSchema, rsvpSchema, newGuestSchema } from "@/lib/rsvp-schema";
 
 describe("guest code", () => {
   it("slugs the first name without accents", () => {
@@ -68,5 +68,13 @@ describe("rsvp schema", () => {
   it("normalizes new guest phones", () => {
     expect(newGuestSchema.parse({ name: "Ana", phone: "(55) 11 98765-0001" }).phone).toBe("5511987650001");
     expect(newGuestSchema.safeParse({ name: "Ana", phone: "1234" }).success).toBe(false);
+  });
+});
+
+describe("guest name", () => {
+  it("trims, and rejects empty or too long names", () => {
+    expect(guestNameSchema.parse("  Marina Costa  ")).toBe("Marina Costa");
+    expect(guestNameSchema.safeParse("   ").success).toBe(false);
+    expect(guestNameSchema.safeParse("a".repeat(121)).success).toBe(false);
   });
 });
